@@ -1,0 +1,3 @@
+C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/.externalNativeBuild/cmake/debug/armeabi-v7a/CMakeFiles/opencv_jni_shared.dir
+C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/.externalNativeBuild/cmake/debug/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/.externalNativeBuild/cmake/debug/armeabi-v7a/CMakeFiles/rebuild_cache.dir
