@@ -37,6 +37,7 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     private boolean found    = false; // Is the gold mineral found
     private Point   screenPosition = new Point(); // Screen position of the mineral
     private Rect    foundRect = new Rect(); // Found rect
+    private int skylocation = 4;
 
 //    public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
 
@@ -88,23 +89,30 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         sector3crop = MathFTC.crop(sector3Mat, sector3TLcorner, sector3BRcorner);
         //Determine mean color of sector 1 (RGB) and break into storage variables
         Core.meanStdDev(sector1crop, sector1Mean, sector1stdev);
-        double sector1RMeanSrc = sector1Mean.get(0,0)[0];
-        double sector1GMeanSrc = sector1Mean.get(1,0)[0];
-        double sector1BMeanSrc = sector1Mean.get(2,0)[0];
+        double sector1RMeanSrc = sector1Mean.get(0, 0)[0];
+        double sector1GMeanSrc = sector1Mean.get(1, 0)[0];
+        double sector1BMeanSrc = sector1Mean.get(2, 0)[0];
         //Determine mean color of sector 2 (RGB) and break into storage variables
         Core.meanStdDev(sector2crop, sector2Mean, sector2stdev);
-        double sector2RMeanSrc = sector2Mean.get(0,0)[0];
-        double sector2GMeanSrc = sector2Mean.get(1,0)[0];
-        double sector2BMeanSrc = sector2Mean.get(2,0)[0];
+        double sector2RMeanSrc = sector2Mean.get(0, 0)[0] * 2;
+        double sector2GMeanSrc = sector2Mean.get(1, 0)[0] * 2;
+        double sector2BMeanSrc = sector2Mean.get(2, 0)[0] * 2;
         //Determine mean color of sector 3 (RGB) and break into storage variables
         Core.meanStdDev(sector3crop, sector3Mean, sector3stdev);
-        double sector3RMeanSrc = sector3Mean.get(0,0)[0];
-        double sector3GMeanSrc = sector3Mean.get(1,0)[0];
-        double sector3BMeanSrc = sector3Mean.get(2,0)[0];
+        double sector3RMeanSrc = sector3Mean.get(0, 0)[0];
+        double sector3GMeanSrc = sector3Mean.get(1, 0)[0];
+        double sector3BMeanSrc = sector3Mean.get(2, 0)[0];
         //Release sector crops for memory
         sector1crop.release();
         sector2crop.release();
         sector3crop.release();
+
+        if (sector1RMeanSrc < sector3RMeanSrc && sector1RMeanSrc < sector2RMeanSrc) {
+            skylocation = 1;
+        } else if (sector3RMeanSrc < sector1RMeanSrc && sector3RMeanSrc < sector2RMeanSrc) {
+            skylocation = 3;
+        } else
+            skylocation = 2;
 
         //Draw rectangles around the three sectors
         Imgproc.rectangle(displayMat, sector1TLcorner, sector1BRcorner, new Scalar(200,0,255),4); // Draw rect for sector1
@@ -124,6 +132,8 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         Imgproc.putText(displayMat, String.format("G:  %3.1f", sector3GMeanSrc), new Point(426,getAdjustedSize().height - 360),0,1, new Scalar(255,0,0),2);
         Imgproc.putText(displayMat, String.format("B:  %3.1f", sector3BMeanSrc), new Point(426,getAdjustedSize().height - 390),0,1, new Scalar(255,0,0),2);
 
+        Imgproc.putText(displayMat,"skystone_at: "+ skylocation, new Point(0,getAdjustedSize().height - 420),0,1, new Scalar(255,0,0),2);
+//
 //        cv::putText(img, cv::format("i am: %3.3f", some_float_number), ...)
 
 
