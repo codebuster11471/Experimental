@@ -29,22 +29,17 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.provider.Settings;
-import android.sax.StartElementListener;
-
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.skystone.modifiedGoldDetector;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.opencv.core.Rect;
 
-@Autonomous(name="PuppyCV: Skystone", group="Codebusters")
+@Autonomous(name="Autonomous Test", group="Codebusters")
 //@Disabled
-public class ModifiedGoldExample extends OpMode
+public class SoftwareBot_Test_Autonomous extends OpMode
 {
     // Detector object
     private modifiedGoldDetector detector;

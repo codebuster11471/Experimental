@@ -208,12 +208,26 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
 
         switch (((Activity) context).getWindowManager().getDefaultDisplay().getRotation()) {
             case Surface.ROTATION_0:
-                Core.rotate(rgba, rgba, Core.ROTATE_90_CLOCKWISE);
-                Core.rotate(gray, gray, Core.ROTATE_90_CLOCKWISE);
+                if(cameraIndex == 0){ //Need to rotate differently depending on front or back camera
+                    Core.rotate(rgba, rgba, Core.ROTATE_90_CLOCKWISE);
+                    Core.rotate(gray, gray, Core.ROTATE_90_CLOCKWISE);
+                } else if(cameraIndex == 1){
+                    Core.rotate(rgba, rgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+                    Core.rotate(gray, gray, Core.ROTATE_90_COUNTERCLOCKWISE);
+                }
                 break;
             case Surface.ROTATION_90:
                 rgba = inputFrame.rgba();
                 gray = inputFrame.gray();
+                break;
+            case Surface.ROTATION_180:
+                if(cameraIndex == 0){ //Need to rotate differently depending on front or back camera
+                    Core.rotate(rgba, rgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+                    Core.rotate(gray, gray, Core.ROTATE_90_COUNTERCLOCKWISE);
+                } else if(cameraIndex == 1){
+                    Core.rotate(rgba, rgba, Core.ROTATE_90_CLOCKWISE);
+                    Core.rotate(gray, gray, Core.ROTATE_90_CLOCKWISE);
+                }
                 break;
             case Surface.ROTATION_270:
                 Core.rotate(rgba, rgba, Core.ROTATE_180);
