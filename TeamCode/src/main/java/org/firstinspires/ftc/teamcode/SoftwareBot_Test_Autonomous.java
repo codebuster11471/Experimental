@@ -58,8 +58,8 @@ public class SoftwareBot_Test_Autonomous extends OpMode
     @Override
     public void init_loop() {
         telemetry.addData("IsFound: ", detector.isFound());
-        Rect rect = detector.getFoundRect();
-        if(detector.isFound()) telemetry.addData("Location: ", Integer.toString((int) (rect.x + rect.width*0.5)) + ", " + Integer.toString((int) (rect.y+0.5*rect.height)));
+//        Rect rect = detector.getFoundRect();
+//        if(detector.isFound()) telemetry.addData("Location: ", Integer.toString((int) (rect.x + rect.width*0.5)) + ", " + Integer.toString((int) (rect.y+0.5*rect.height)));
         telemetry.addData(">", "Waiting for start");
         telemetry.update();
     }

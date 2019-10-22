@@ -9,7 +9,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -33,9 +32,6 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
 
 
     // Results of the detector
-    private boolean found    = false; // Is the gold mineral found
-    private Point   screenPosition = new Point(); // Screen position of the mineral
-    private Rect    foundRect = new Rect(); // Found rect
     public int skystoneLocation = -1;
 
 //define analysis zones
@@ -63,7 +59,6 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     }
 
 
-    @Override
     public Mat process(Mat input) {
         // Copy the input mat to our working mats, then release it for memory
         input.copyTo(displayMat);
@@ -122,36 +117,20 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         Imgproc.putText(displayMat, String.format("G:  %3.1f", sector3GMeanSrc), new Point(426,getAdjustedSize().height - 360),0,1, new Scalar(255,0,0),2);
         Imgproc.putText(displayMat, String.format("B:  %3.1f", sector3BMeanSrc), new Point(426,getAdjustedSize().height - 390),0,1, new Scalar(255,0,0),2);
 
-        Imgproc.putText(displayMat,"Skystone at location "+ skystoneLocation, new Point(0,getAdjustedSize().height - 440),0,1, new Scalar(255,0,0),2);
+
+        if(skystoneLocation == 1){
+            Imgproc.putText(displayMat,"X", new Point(75,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
+        }else if (skystoneLocation == 2){
+            Imgproc.putText(displayMat,"X", new Point(275,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
+        }else if (skystoneLocation == 3){
+            Imgproc.putText(displayMat,"X", new Point(475,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
+        }
+//        Imgproc.putText(displayMat,"Skystone at location "+ skystoneLocation, new Point(0,getAdjustedSize().height - 440),0,1, new Scalar(255,0,0),2);
 
         return displayMat;
     }
 
-    @Override
-    public void useDefaults() {
-    }
-//
-//    /**
-//     * Returns the gold element's last position in screen pixels
-//     * @return position in screen pixels
-//     */
-//    public Point getScreenPosition(){
-//        return screenPosition;
-//    }
-
-    /**
-     * Returns the gold element's found rectangle
-     * @return gold element rect
-     */
-    public Rect getFoundRect() {
-        return foundRect;
-    }
-
-    /**
-     * Returns if a gold mineral is being tracked/detected
-     * @return if a gold mineral is being tracked/detected
-     */
-    public boolean isFound() {
-        return found;
+    public int isFound() {
+        return skystoneLocation;
     }
 }

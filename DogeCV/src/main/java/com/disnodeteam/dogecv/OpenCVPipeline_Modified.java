@@ -62,7 +62,6 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
 
     //OpenCV-related
     protected JavaCameraView cameraView;
-    protected DrawViewSource rawView;
     private volatile ViewDisplay viewDisplay;
     protected Context context;
     private boolean initStarted = false;
@@ -71,9 +70,7 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
     //DogeCV logic
     private DogeCV.CameraMode cameraMode = DogeCV.CameraMode.BACK;
     private volatile int cameraIndex = 0;
-    private volatile boolean isEnabled = false;
     public  int degrees = 0;
-    public  int result = 0;
 
 
     /**
@@ -116,7 +113,6 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
         final Activity activity = (Activity) context;
         final Context finalContext = context;
         final CameraBridgeViewBase.CvCameraViewListener2 self = this;
-        final int cameraMoniterViewID = context.getResources().getIdentifier("cameraMonitorViewId", "id", context.getPackageName());
         //final int cameraMoniterViewID = context.getResources().getIdentifier("RelativeLayout", "id", context.getPackageName());
 
         activity.runOnUiThread(new Runnable() {
@@ -146,7 +142,6 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
         //Runs enabling sequence for Dogeforia
         cameraView.enableView();
         viewDisplay.setCurrentView(context, getCameraView());
-        this.isEnabled = true;
     }
 
     /**
@@ -157,7 +152,6 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
      * because dean kamen help you if something bad happens from that
      */
     public void disable() {
-        this.isEnabled = false;
         cameraView.disableView();
         viewDisplay.removeCurrentView(context);
     }

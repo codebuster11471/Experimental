@@ -40,7 +40,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.opencv.core.Rect;
 
 @Autonomous(name="PuppyCV: Skystone", group="Codebusters")
 //@Disabled
@@ -62,10 +61,8 @@ public class ModifiedGoldExample extends OpMode
      */
     @Override
     public void init_loop() {
-        telemetry.addData("IsFound: ", detector.isFound());
-        Rect rect = detector.getFoundRect();
-        if(detector.isFound()) telemetry.addData("Location: ", Integer.toString((int) (rect.x + rect.width*0.5)) + ", " + Integer.toString((int) (rect.y+0.5*rect.height)));
-        telemetry.addData(">", "Waiting for start");
+        telemetry.addData("Skystone location", detector.isFound());
+        telemetry.addData(">>>", "Waiting for start");
         telemetry.update();
     }
 
@@ -74,7 +71,7 @@ public class ModifiedGoldExample extends OpMode
      */
     @Override
     public void start() {
-
+        if(detector != null) detector.disable(); // Stop the detector!
     }
 
     /*
