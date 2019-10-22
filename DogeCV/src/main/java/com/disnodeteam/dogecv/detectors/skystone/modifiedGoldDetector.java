@@ -128,42 +128,10 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         Imgproc.putText(displayMat,"skystone_at: "+ skylocation, new Point(0,getAdjustedSize().height - 420),0,1, new Scalar(255,0,0),2);
 
 
-        // Current result
-        Rect bestRect = null;
-        double bestDifference = Double.MAX_VALUE; // MAX_VALUE since less difference = better
-
-//        // Loop through the contours and score them, searching for the best result
-//        for(MatOfPoint cont : contoursYellow){
-//            double score = calculateScore(cont); // Get the difference score using the scoring API
-//
-//            // Get bounding rect of contour
-//            Rect rect = Imgproc.boundingRect(cont);
-//            Imgproc.rectangle(displayMat, rect.tl(), rect.br(), new Scalar(0,0,255),2); // Draw rect
-//
-//            // If the result is better then the previously tracked one, set this rect as the new best
-//            if(score < bestDifference){
-//                bestDifference = score;
-//                bestRect = rect;
-//            }
-//        }
-
-        if(bestRect != null){
-            // Show chosen result
-            Imgproc.rectangle(displayMat, bestRect.tl(), bestRect.br(), new Scalar(255,0,0),4);
-            Imgproc.putText(displayMat, "Chosen", bestRect.tl(),0,1,new Scalar(255,255,255));
-
-            screenPosition = new Point(bestRect.x, bestRect.y);
-            foundRect = bestRect;
-            found = true;
-        }else{
-            found = false;
-        }
 
 
-        //Print result
-//        Imgproc.putText(displayMat,"R: " + sector1RMeanSrc,new Point(0,getAdjustedSize().height - 30),0,1, new Scalar(255,0,0),2);
-//        Imgproc.putText(displayMat,"G: " + sector1GMeanSrc,new Point(0,getAdjustedSize().height - 130),0,1, new Scalar(255,0,0),2);
-//        Imgproc.putText(displayMat,"B: " + sector1BMeanSrc,new Point(0,getAdjustedSize().height - 230),0,1, new Scalar(255,0,0),2);
+
+
 
 
         return displayMat;
