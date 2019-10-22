@@ -39,15 +39,7 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     private Rect    foundRect = new Rect(); // Found rect
     private int skylocation = 4;
 
-//    public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
-
-    //Create the default filters and scorers
-//    public DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW); //Default Yellow filter
-//
-//    public RatioScorer       ratioScorer       = new RatioScorer(1.0, 3);          // Used to find perfect squares
-//    public MaxAreaScorer     maxAreaScorer     = new MaxAreaScorer( 0.01);                    // Used to find largest objects
-//    public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05); // Used to find objects near a tuned area value
-
+//define analysis zones
     public Point sector1TLcorner = new Point(0, 160); //Sets the top left corner of first sector in pixel (x,y) coordinates
     public Point sector1BRcorner = new Point(213, 320); //Sets the bottom right corner of first sector in pixel (x,y) coordinates
     public Point sector2TLcorner = new Point(213, 160); //Sets the top left corner of second sector in pixel (x,y) coordinates
@@ -55,7 +47,7 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     public Point sector3TLcorner = new Point(426, 160); //Sets the top left corner of third sector in pixel (x,y) coordinates
     public Point sector3BRcorner = new Point(640, 320); //Sets the bottom right corner of third sector in pixel (x,y) coordinates
 
-
+//define storage variables
     MatOfDouble sector1Mean = new MatOfDouble();
     MatOfDouble sector1stdev = new MatOfDouble();
     MatOfDouble sector2Mean = new MatOfDouble();
@@ -107,6 +99,7 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         sector2crop.release();
         sector3crop.release();
 
+        //define skystone as the lowest value of red
         if (sector1RMeanSrc < sector3RMeanSrc && sector1RMeanSrc < sector2RMeanSrc) {
             skylocation = 1;
         } else if (sector3RMeanSrc < sector1RMeanSrc && sector3RMeanSrc < sector2RMeanSrc) {
@@ -133,8 +126,6 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         Imgproc.putText(displayMat, String.format("B:  %3.1f", sector3BMeanSrc), new Point(426,getAdjustedSize().height - 390),0,1, new Scalar(255,0,0),2);
 
         Imgproc.putText(displayMat,"skystone_at: "+ skylocation, new Point(0,getAdjustedSize().height - 420),0,1, new Scalar(255,0,0),2);
-//
-//        cv::putText(img, cv::format("i am: %3.3f", some_float_number), ...)
 
 
         // Current result
