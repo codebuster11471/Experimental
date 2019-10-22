@@ -42,23 +42,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.opencv.core.Rect;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
-@Autonomous(name="Computer Vision Beta: Buildstone Detect", group="Codebusters")
+@Autonomous(name="PuppyCV: Skystone", group="Codebusters")
 //@Disabled
 public class ModifiedGoldExample extends OpMode
 {
@@ -68,18 +52,15 @@ public class ModifiedGoldExample extends OpMode
 
     @Override
     public void init() {
-        telemetry.addData("Status", "I have started");
+        telemetry.addData("Status", "Active");
         // Set up detector
         detector = new modifiedGoldDetector(); // Create detector
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
-
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); // Initialize it with the app context and camera
         detector.enable(); // Start the detector!
 
+//        telemetry.addData("Skystone location", Integer.toString(skystoneLocation));
         telemetry.addData(">", "Waiting for start");
         telemetry.update();
-
-
-
     }
 
     /*

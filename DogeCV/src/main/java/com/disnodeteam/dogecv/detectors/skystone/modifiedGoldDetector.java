@@ -1,7 +1,5 @@
 package com.disnodeteam.dogecv.detectors.skystone;
 
-import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.DogeCVDetector;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector_Modified;
 import com.disnodeteam.dogecv.math.MathFTC;
 
@@ -19,6 +17,7 @@ import org.opencv.imgproc.Imgproc;
 
 /**
  * Created by Victo on 9/10/2018.
+ * Updated October 2019 Codebusters 11471
  */
 
 public class modifiedGoldDetector extends DogeCVDetector_Modified {
@@ -37,7 +36,7 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     private boolean found    = false; // Is the gold mineral found
     private Point   screenPosition = new Point(); // Screen position of the mineral
     private Rect    foundRect = new Rect(); // Found rect
-    private int skylocation = 4;
+    public int skystoneLocation = -1;
 
 //define analysis zones
     public Point sector1TLcorner = new Point(0, 160); //Sets the top left corner of first sector in pixel (x,y) coordinates
@@ -66,14 +65,12 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
 
     @Override
     public Mat process(Mat input) {
-
         // Copy the input mat to our working mats, then release it for memory
         input.copyTo(displayMat);
         input.copyTo(sector1Mat);
         input.copyTo(sector2Mat);
         input.copyTo(sector3Mat);
         input.release();
-
 
         //Break image into 3 sectors, as defined by top-left and bottom-right corners
         sector1crop = MathFTC.crop(sector1Mat, sector1TLcorner, sector1BRcorner);
@@ -101,11 +98,11 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
 
         //define skystone as the lowest value of red
         if (sector1RMeanSrc < sector3RMeanSrc && sector1RMeanSrc < sector2RMeanSrc) {
-            skylocation = 1;
+            skystoneLocation = 1;
         } else if (sector3RMeanSrc < sector1RMeanSrc && sector3RMeanSrc < sector2RMeanSrc) {
-            skylocation = 3;
+            skystoneLocation = 3;
         } else
-            skylocation = 2;
+            skystoneLocation = 2;
 
         //Draw rectangles around the three sectors
         Imgproc.rectangle(displayMat, sector1TLcorner, sector1BRcorner, new Scalar(200,0,255),4); // Draw rect for sector1
@@ -125,40 +122,22 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         Imgproc.putText(displayMat, String.format("G:  %3.1f", sector3GMeanSrc), new Point(426,getAdjustedSize().height - 360),0,1, new Scalar(255,0,0),2);
         Imgproc.putText(displayMat, String.format("B:  %3.1f", sector3BMeanSrc), new Point(426,getAdjustedSize().height - 390),0,1, new Scalar(255,0,0),2);
 
-        Imgproc.putText(displayMat,"skystone_at: "+ skylocation, new Point(0,getAdjustedSize().height - 420),0,1, new Scalar(255,0,0),2);
-
-
-
-
-
-
-
+        Imgproc.putText(displayMat,"Skystone at location "+ skystoneLocation, new Point(0,getAdjustedSize().height - 440),0,1, new Scalar(255,0,0),2);
 
         return displayMat;
     }
 
     @Override
     public void useDefaults() {
-//        addScorer(ratioScorer);
-//
-//        // Add diffrent scoreres depending on the selected mode
-//        if(areaScoringMethod == DogeCV.AreaScoringMethod.MAX_AREA){
-//            addScorer(maxAreaScorer);
-//        }
-//
-//        if (areaScoringMethod == DogeCV.AreaScoringMethod.PERFECT_AREA){
-//            addScorer(perfectAreaScorer);
-//        }
-//
     }
-
-    /**
-     * Returns the gold element's last position in screen pixels
-     * @return position in screen pixels
-     */
-    public Point getScreenPosition(){
-        return screenPosition;
-    }
+//
+//    /**
+//     * Returns the gold element's last position in screen pixels
+//     * @return position in screen pixels
+//     */
+//    public Point getScreenPosition(){
+//        return screenPosition;
+//    }
 
     /**
      * Returns the gold element's found rectangle

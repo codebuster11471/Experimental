@@ -7,7 +7,6 @@ import com.disnodeteam.dogecv.scoring.DogeCVScorer;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -16,6 +15,7 @@ import java.util.List;
 
 /**
  * Created by Victo on 9/10/2018.
+ * Updated October 2019 Codebusters 11471
  */
 
 public abstract class DogeCVDetector_Modified extends OpenCVPipeline_Modified{

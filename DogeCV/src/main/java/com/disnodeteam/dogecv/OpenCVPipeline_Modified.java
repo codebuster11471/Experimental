@@ -82,22 +82,9 @@ public abstract class OpenCVPipeline_Modified implements CameraBridgeViewBase.Cv
      * @param viewDisplay the ViewDisplay that will display the underlying JavaCameraView to the screen;
      *                    in most cases, using CameraViewDisplay.getInstance() as the argument is just fine.
      */
-    public void init(Context context, ViewDisplay viewDisplay) {
-        init(context, viewDisplay, DogeCV.CameraMode.BACK, false, null);
+    public void init(Context context, ViewDisplay viewDisplay, DogeCV.CameraMode cameraMode) {
+        init(context, viewDisplay, cameraMode, false, null);
     }
-
-    /**
-     * Initializes the OpenCVPipeline, assuming no webcam used. Will throw a IllegalArgumentException if one is used
-     * @param context the application context, usually hardwareMap.appContext
-     * @param viewDisplay the ViewDisplay that will display the underlying JavaCameraView to the screen;
-     *                    in most cases, using CameraViewDisplay.getInstance() as the argument is just fine.
-     * @param cameraMode Which camera is to be used, will be a DogeCV.CameraMode
-     * @param findVuMarks A boolean. True to scan for vumarks, false to ignore them
-     */
-    public void init(Context context, ViewDisplay viewDisplay, DogeCV.CameraMode cameraMode, boolean findVuMarks) {
-        init(context, viewDisplay, cameraMode, findVuMarks, null);
-    }
-
 
 
     /**
