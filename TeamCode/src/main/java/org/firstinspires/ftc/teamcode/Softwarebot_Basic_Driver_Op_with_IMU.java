@@ -194,10 +194,10 @@ public class Softwarebot_Basic_Driver_Op_with_IMU extends OpMode
 
 
         // Driver 1 motor power using mecanum equations
-        motorFLpower1 = driveSpeedKFinal*(-leftDrive1 + rightTurn1 + leftStrafe1);
-        motorFRpower1 = driveSpeedKFinal*(-leftDrive1 - rightTurn1 - leftStrafe1);
-        motorRLpower1 = driveSpeedKFinal*(-leftDrive1 + rightTurn1 - leftStrafe1);
-        motorRRpower1 = driveSpeedKFinal*(-leftDrive1 - rightTurn1 + leftStrafe1);
+        motorFLpower1 = driveSpeedKFinal*(leftDrive1 + rightTurn1 + leftStrafe1);
+        motorFRpower1 = driveSpeedKFinal*(leftDrive1 - rightTurn1 - leftStrafe1);
+        motorRLpower1 = driveSpeedKFinal*(leftDrive1 + rightTurn1 - leftStrafe1);
+        motorRRpower1 = driveSpeedKFinal*(leftDrive1 - rightTurn1 + leftStrafe1);
 
         // Add up all motor power sources
         motorFLpowerFinal = motorFLpower1;

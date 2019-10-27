@@ -48,14 +48,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Softwarebot Basic Driver", group="Iterative Opmode")
+@TeleOp(name="Hardwarebot Basic Driver", group="Iterative Opmode")
 //@Disabled
-public class Softwarebot_Basic_Driver_Op extends OpMode
+public class Hardwarebot_Basic_Driver_Op extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private double driver1SpeedKTurbo = 1.0;  //1.0 = 100% power
-    private double driver1SpeedKStandard = 0.25;  //0.XX = XX% power
+    private double driver1SpeedKStandard = 0.50;  //0.XX = XX% power
     private double driver1SpeedKLast = driver1SpeedKStandard;  //Initialize at standard power
     private double driver1SpeedKTemp = driver1SpeedKStandard;  //Initialize at standard power
     private double driveSpeedKFinal = driver1SpeedKStandard;  //Initialize at standard power
