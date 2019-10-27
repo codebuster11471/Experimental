@@ -78,18 +78,18 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         double sector1BMeanSrc = sector1Mean.get(2, 0)[0];
         //Determine mean color of sector 2 (RGB) and break into storage variables
         Core.meanStdDev(sector2crop, sector2Mean, sector2stdev);
-        double sector2RMeanSrc = sector2Mean.get(0, 0)[0] * 2;
-        double sector2GMeanSrc = sector2Mean.get(1, 0)[0] * 2;
-        double sector2BMeanSrc = sector2Mean.get(2, 0)[0] * 2;
+        double sector2RMeanSrc = sector2Mean.get(0, 0)[0];
+        double sector2GMeanSrc = sector2Mean.get(1, 0)[0];
+        double sector2BMeanSrc = sector2Mean.get(2, 0)[0];
         //Determine mean color of sector 3 (RGB) and break into storage variables
         Core.meanStdDev(sector3crop, sector3Mean, sector3stdev);
         double sector3RMeanSrc = sector3Mean.get(0, 0)[0];
         double sector3GMeanSrc = sector3Mean.get(1, 0)[0];
         double sector3BMeanSrc = sector3Mean.get(2, 0)[0];
         //Release sector crops for memory
-        sector1crop.release();
-        sector2crop.release();
-        sector3crop.release();
+//        sector1crop.release();
+//        sector2crop.release();
+//        sector3crop.release();
 
         //define skystone as the lowest value of red
         if (sector1RMeanSrc < sector3RMeanSrc && sector1RMeanSrc < sector2RMeanSrc) {

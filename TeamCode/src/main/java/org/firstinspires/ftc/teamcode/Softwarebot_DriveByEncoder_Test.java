@@ -75,6 +75,10 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
 //    private DcMotor motorRL = null;
 //    private DcMotor motorRR = null;
 
+    double[] position = {0,0};
+    private double absPositionLeft = 0;
+    private double absPositionRight = 0;
+
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
@@ -120,9 +124,24 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 10.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 10.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        position = encoderDrive(DRIVE_SPEED,  48,  48, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        absPositionLeft = position[0];
+        absPositionRight = position[1];
+        telemetry.addData("", "Final absolute position: %7f : %7f", absPositionLeft , absPositionRight);
+        telemetry.update();
+        sleep(3000);
+        position = encoderDrive(TURN_SPEED,   12, -12, 10.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        absPositionLeft = position[0];
+        absPositionRight = position[1];
+        telemetry.addData("", "Final absolute position: %7f : %7f", absPositionLeft , absPositionRight);
+        telemetry.update();
+        sleep(3000);
+        position = encoderDrive(DRIVE_SPEED, -24, -24, 10.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        absPositionLeft = position[0];
+        absPositionRight = position[1];
+        telemetry.addData("", "Final absolute position: %7f : %7f", absPositionLeft , absPositionRight);
+        telemetry.update();
+        sleep(3000);
 
 
 //        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
@@ -141,11 +160,12 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public void encoderDrive(double speed,
+    public double[] encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
+        double[] array = {0, 0};
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
@@ -190,7 +210,12 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
             motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+            array[0] = motorFL.getCurrentPosition()/COUNTS_PER_INCH;
+            array[1] = motorFR.getCurrentPosition()/COUNTS_PER_INCH;
+
             //  sleep(250);   // optional pause after each move
+
         }
+        return array;
     }
 }
