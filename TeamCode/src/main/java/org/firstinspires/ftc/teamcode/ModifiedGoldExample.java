@@ -52,7 +52,7 @@ public class ModifiedGoldExample extends OpMode
     @Override
     public void init() {
         detector = new modifiedGoldDetector(); // Create detector
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); // Initialize it with the app context and camera
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.FRONT); // Initialize it with the app context and camera
         detector.enable(); // Start the detector!
     }
 

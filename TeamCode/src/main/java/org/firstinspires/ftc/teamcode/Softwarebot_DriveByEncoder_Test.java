@@ -127,19 +127,19 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
         position = encoderDrive(DRIVE_SPEED,  48,  48, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
         absPositionLeft = position[0];
         absPositionRight = position[1];
-        telemetry.addData("", "Final absolute position: %7f : %7f", absPositionLeft , absPositionRight);
+        telemetry.addData("", "Final absolute position: %7.3f : %7.3f", absPositionLeft , absPositionRight);
         telemetry.update();
         sleep(3000);
         position = encoderDrive(TURN_SPEED,   12, -12, 10.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
         absPositionLeft = position[0];
         absPositionRight = position[1];
-        telemetry.addData("", "Final absolute position: %7f : %7f", absPositionLeft , absPositionRight);
+        telemetry.addData("", "Final absolute position: %7.3f : %7.3f", absPositionLeft , absPositionRight);
         telemetry.update();
         sleep(3000);
         position = encoderDrive(DRIVE_SPEED, -24, -24, 10.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         absPositionLeft = position[0];
         absPositionRight = position[1];
-        telemetry.addData("", "Final absolute position: %7f : %7f", absPositionLeft , absPositionRight);
+        telemetry.addData("", "Final absolute position: %7.3f : %7.3f", absPositionLeft , absPositionRight);
         telemetry.update();
         sleep(3000);
 
