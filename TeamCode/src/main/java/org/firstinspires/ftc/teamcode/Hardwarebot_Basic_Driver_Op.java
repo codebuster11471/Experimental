@@ -56,13 +56,25 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private double driver1SpeedKTurbo = 1.0;  //1.0 = 100% power
     private double driver1SpeedKStandard = 0.50;  //0.XX = XX% power
-    private double driver1SpeedKLast = driver1SpeedKStandard;  //Initialize at standard power
-    private double driver1SpeedKTemp = driver1SpeedKStandard;  //Initialize at standard power
-    private double driveSpeedKFinal = driver1SpeedKStandard;  //Initialize at standard power
+    private double driver1SpeedKLast = driver1SpeedKTurbo;  //Initialize at standard power
+    private double driver1SpeedKTemp = driver1SpeedKTurbo;  //Initialize at standard power
+    private double driveSpeedKFinal = driver1SpeedKTurbo;  //Initialize at standard power
+    private double intakeOpStop = 0.00;  //0.XX = XX% power
+    private double intakeOpStart = 1.0;
+    private double intakeOpLast = intakeOpStop;  //Initialize at standard power
+    private double intakeOpTemp = intakeOpStop;  //Initialize at standard power
+    private double intakeOpFinal = intakeOpStop;  //Initialize at standard power
+    private double outtakeOpStop = 0.00;  //0.XX = XX% power
+    private double outtakeOpStart = 1.0;
+    private double outtakeOpLast = outtakeOpStop;  //Initialize at standard power
+    private double outtakeOpTemp = outtakeOpStop;  //Initialize at standard power
+    private double outtakeOpFinal = outtakeOpStop;  //Initialize at standard power
     private DcMotor motorFL = null;
     private DcMotor motorFR = null;
     private DcMotor motorRL = null;
     private DcMotor motorRR = null;
+    private DcMotor intakeR = null;
+    private DcMotor intakeL = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -76,6 +88,8 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorRL = hardwareMap.get(DcMotor.class, "motorRL");
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
+        intakeR = hardwareMap.get(DcMotor.class, "intakeR");
+        intakeL = hardwareMap.get(DcMotor.class, "intakeL");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -83,6 +97,8 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorRL.setDirection(DcMotor.Direction.REVERSE);
         motorRR.setDirection(DcMotor.Direction.FORWARD);
+        intakeR.setDirection(DcMotor.Direction.REVERSE);
+        intakeL.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -117,21 +133,57 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         double rightTurn = gamepad1.right_stick_x;
 
         // Toggle driver1 speed (turbo or standard) when pressing Start button
-        if(gamepad1.start && driver1SpeedKLast < driver1SpeedKTurbo){
+        if (gamepad1.start && driver1SpeedKLast < driver1SpeedKTurbo) {
             driver1SpeedKTemp = driver1SpeedKTurbo;
-        }else if (gamepad1.start && driver1SpeedKLast > driver1SpeedKStandard) {
+        } else if (gamepad1.start && driver1SpeedKLast > driver1SpeedKStandard) {
             driver1SpeedKTemp = driver1SpeedKStandard;
         }
-        if(!gamepad1.start && driver1SpeedKLast != driver1SpeedKTemp){  //This is to prevent toggle bounce when holding the Start button; e.g. toggle on release
+        if (!gamepad1.start && driver1SpeedKLast != driver1SpeedKTemp) {  //This is to prevent toggle bounce when holding the Start button; e.g. toggle on release
             driver1SpeedKLast = driver1SpeedKTemp;
         }
         driveSpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
+
+        // Toggle Intake when pressing Left Bumper
+        if (gamepad2.left_bumper && intakeOpLast < intakeOpStart) {
+            intakeOpTemp = intakeOpStart;
+        } else if (gamepad2.left_bumper && intakeOpLast > intakeOpStop) {
+            intakeOpTemp = intakeOpStop;
+        }
+        if (!gamepad2.left_bumper && intakeOpLast != intakeOpTemp) {  //This is to prevent toggle bounce when holding the Left Bumper; e.g. toggle on release
+            intakeOpLast = intakeOpTemp;
+            outtakeOpFinal = 0.00;
+            outtakeOpTemp = 0.00;
+            outtakeOpLast = 0.00;
+        }
+        intakeOpFinal = intakeOpTemp;  //intake Motor speed
+
+        // Toggle Outake when pressing Left Bumper
+        if (gamepad2.right_bumper && outtakeOpLast < outtakeOpStart) {
+            outtakeOpTemp = outtakeOpStart;
+        } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
+            outtakeOpTemp = outtakeOpStop;
+        }
+        if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Left Bumper; e.g. toggle on release
+            outtakeOpLast = outtakeOpTemp;
+            intakeOpFinal = 0.00;
+            intakeOpTemp = 0.00;
+            intakeOpLast = 0.00;
+        }
+
+        outtakeOpFinal = outtakeOpTemp;  //intake Motor speed
+
+
 
         // Send calculated power to wheels using mecanum equations
         motorFL.setPower(driveSpeedKFinal*(leftDrive + rightTurn + leftStrafe));
         motorFR.setPower(driveSpeedKFinal*(leftDrive - rightTurn - leftStrafe));
         motorRL.setPower(driveSpeedKFinal*(leftDrive + rightTurn - leftStrafe));
         motorRR.setPower(driveSpeedKFinal*(leftDrive - rightTurn + leftStrafe));
+
+        // Send calculated power to intake Motors
+        intakeR.setPower(intakeOpFinal - outtakeOpFinal);
+        intakeL.setPower(intakeOpFinal - outtakeOpFinal);
+
 
         // Add telemetry
 //        telemetry.addData("Status", "Run Time: " + runtime.toString());
