@@ -174,8 +174,6 @@ public class Softwarebot_Basic_Driver_Op_with_IMU extends OpMode
         driveSpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
 
 
-
-
         //IMU heading correction.  Apply rotation to drive and strafe vectors
         double[][] rotationMatrix = { {Math.cos(Math.toRadians(heading)), -Math.sin(Math.toRadians(heading))},
                 {Math.sin(Math.toRadians(heading)), Math.cos(Math.toRadians(heading))}  };

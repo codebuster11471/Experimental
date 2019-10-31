@@ -52,29 +52,39 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 public class Hardwarebot_Basic_Driver_Op extends OpMode
 {
-    // Declare OpMode members.
+    //Drive system declarations
     private ElapsedTime runtime = new ElapsedTime();
-    private double driver1SpeedKTurbo = 1.0;  //1.0 = 100% power
-    private double driver1SpeedKStandard = 0.50;  //0.XX = XX% power
-    private double driver1SpeedKLast = driver1SpeedKTurbo;  //Initialize at standard power
-    private double driver1SpeedKTemp = driver1SpeedKTurbo;  //Initialize at standard power
-    private double driveSpeedKFinal = driver1SpeedKTurbo;  //Initialize at standard power
-    private double intakeOpStop = 0.00;  //0.XX = XX% power
-    private double intakeOpStart = 1.0;
-    private double intakeOpLast = intakeOpStop;  //Initialize at standard power
-    private double intakeOpTemp = intakeOpStop;  //Initialize at standard power
-    private double intakeOpFinal = intakeOpStop;  //Initialize at standard power
-    private double outtakeOpStop = 0.00;  //0.XX = XX% power
-    private double outtakeOpStart = 1.0;
-    private double outtakeOpLast = outtakeOpStop;  //Initialize at standard power
-    private double outtakeOpTemp = outtakeOpStop;  //Initialize at standard power
-    private double outtakeOpFinal = outtakeOpStop;  //Initialize at standard power
     private DcMotor motorFL = null;
     private DcMotor motorFR = null;
     private DcMotor motorRL = null;
     private DcMotor motorRR = null;
+    private double driver1SpeedKTurbo = 1.0;  //1.0 = 100% power
+    private double driver1SpeedKStandard = 0.50;  //0.XX = XX% power
+    private double driver1SpeedKLast = driver1SpeedKTurbo;  //Initialize at turbo power
+    private double driver1SpeedKTemp = driver1SpeedKTurbo;  //Initialize at turbo power
+    private double driver1SpeedKFinal = driver1SpeedKTurbo;  //Initialize at turbo power
+    private double motorFLpower1 = 0;
+    private double motorFRpower1 = 0;
+    private double motorRLpower1 = 0;
+    private double motorRRpower1 = 0;
+    private double motorFLpowerFinal = 0;
+    private double motorFRpowerFinal = 0;
+    private double motorRLpowerFinal = 0;
+    private double motorRRpowerFinal = 0;
+    //Intake/outtake system declarations
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
+    private double intakeOpStop = 0.00;  //0%
+    private double intakeOpStart = 1.0;  //100%
+    private double intakeOpLast = intakeOpStop;  //Initialize at stop
+    private double intakeOpTemp = intakeOpStop;  //Initialize at stop
+    private double intakeOpFinal = intakeOpStop;  //Initialize at stop
+    private double outtakeOpStop = 0.00;  //0%
+    private double outtakeOpStart = -1.0;  //-100%
+    private double outtakeOpLast = outtakeOpStop;  //Initialize at stop
+    private double outtakeOpTemp = outtakeOpStop;  //Initialize at stop
+    private double outtakeOpFinal = outtakeOpStop;  //Initialize at stop
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -124,13 +134,13 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
 
 
+//*******DRIVE OPERATION**************************************************************************//
         // Left stick to go forward and strafe, and right stick to turn.
-        double leftDrive = -gamepad1.left_stick_y;
-        double leftStrafe = gamepad1.left_stick_x;
-        double rightTurn = gamepad1.right_stick_x;
+        double drive1 = -gamepad1.left_stick_y;  //Driver 1 drive command
+        double strafe1 = gamepad1.left_stick_x;  //Driver 1 strafe command
+        double turn1 = gamepad1.right_stick_x;  //Driver 1 turn command
 
         // Toggle driver1 speed (turbo or standard) when pressing Start button
         if (gamepad1.start && driver1SpeedKLast < driver1SpeedKTurbo) {
@@ -141,8 +151,31 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         if (!gamepad1.start && driver1SpeedKLast != driver1SpeedKTemp) {  //This is to prevent toggle bounce when holding the Start button; e.g. toggle on release
             driver1SpeedKLast = driver1SpeedKTemp;
         }
-        driveSpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
+        driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
 
+        // Driver 1 motor power using mecanum equations
+        motorFLpower1 = driver1SpeedKFinal*(drive1 + turn1 + strafe1);
+        motorFRpower1 = driver1SpeedKFinal*(drive1 - turn1 - strafe1);
+        motorRLpower1 = driver1SpeedKFinal*(drive1 + turn1 - strafe1);
+        motorRRpower1 = driver1SpeedKFinal*(drive1 - turn1 + strafe1);
+
+        // Add up all motor power sources
+        motorFLpowerFinal = motorFLpower1;
+        motorFRpowerFinal = motorFRpower1;
+        motorRLpowerFinal = motorRLpower1;
+        motorRRpowerFinal = motorRRpower1;
+
+        // Send calculated power to wheels using mecanum equations
+        motorFL.setPower(motorFLpowerFinal);
+        motorFR.setPower(motorFRpowerFinal);
+        motorRL.setPower(motorRLpowerFinal);
+        motorRR.setPower(motorRRpowerFinal);
+
+        telemetry.addData("Kdriver1", driver1SpeedKFinal);
+//************************************************************************************************//
+
+
+//*******INTAKE/OUTTAKE OPERATION*****************************************************************//
         // Toggle Intake when pressing Left Bumper
         if (gamepad2.left_bumper && intakeOpLast < intakeOpStart) {
             intakeOpTemp = intakeOpStart;
@@ -151,43 +184,39 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         }
         if (!gamepad2.left_bumper && intakeOpLast != intakeOpTemp) {  //This is to prevent toggle bounce when holding the Left Bumper; e.g. toggle on release
             intakeOpLast = intakeOpTemp;
+            //Turn off outtake if it is already on
             outtakeOpFinal = 0.00;
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
         }
         intakeOpFinal = intakeOpTemp;  //intake Motor speed
 
-        // Toggle Outake when pressing Left Bumper
+        // Toggle Outtake when pressing Right Bumper
         if (gamepad2.right_bumper && outtakeOpLast < outtakeOpStart) {
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;
         }
-        if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Left Bumper; e.g. toggle on release
+        if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
             outtakeOpLast = outtakeOpTemp;
+            //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;
             intakeOpLast = 0.00;
         }
+        outtakeOpFinal = outtakeOpTemp;  //outtake Motor speed
 
-        outtakeOpFinal = outtakeOpTemp;  //intake Motor speed
-
-
-
-        // Send calculated power to wheels using mecanum equations
-        motorFL.setPower(driveSpeedKFinal*(leftDrive + rightTurn + leftStrafe));
-        motorFR.setPower(driveSpeedKFinal*(leftDrive - rightTurn - leftStrafe));
-        motorRL.setPower(driveSpeedKFinal*(leftDrive + rightTurn - leftStrafe));
-        motorRR.setPower(driveSpeedKFinal*(leftDrive - rightTurn + leftStrafe));
-
-        // Send calculated power to intake Motors
-        intakeR.setPower(intakeOpFinal - outtakeOpFinal);
-        intakeL.setPower(intakeOpFinal - outtakeOpFinal);
+        // Send calculated power to intake/outtake Motors
+        intakeR.setPower(intakeOpFinal + outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+        intakeL.setPower(intakeOpFinal + outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+//************************************************************************************************//
 
 
         // Add telemetry
 //        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Kdriver1", driveSpeedKFinal);
+
+        telemetry.update();
+
     }
 
     /*
