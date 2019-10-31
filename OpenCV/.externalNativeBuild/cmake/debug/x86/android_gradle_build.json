@@ -2,11 +2,11 @@
 {
 	"buildFiles" : 
 	[
-		"C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/libcxx_helper/CMakeLists.txt"
+		"C:/Users/Codebusters/Documents/FTC 2019 Skystone/Software/Experimental-master/Experimental/OpenCV/libcxx_helper/CMakeLists.txt"
 	],
 	"cleanCommands" : 
 	[
-		"C:\\Users\\User1\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\User1\\Documents\\FTC 2019 Skystone\\Software\\SkyStone-5.2 - Experimental\\OpenCV\\.externalNativeBuild\\cmake\\debug\\x86\" --target clean"
+		"C:\\Users\\Codebusters\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\Codebusters\\Documents\\FTC 2019 Skystone\\Software\\Experimental-master\\Experimental\\OpenCV\\.externalNativeBuild\\cmake\\debug\\x86\" --target clean"
 	],
 	"cppFileExtensions" : [ "cpp" ],
 	"libraries" : 
@@ -15,27 +15,27 @@
 		{
 			"abi" : "x86",
 			"artifactName" : "opencv_jni_shared",
-			"buildCommand" : "C:\\Users\\User1\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\User1\\Documents\\FTC 2019 Skystone\\Software\\SkyStone-5.2 - Experimental\\OpenCV\\.externalNativeBuild\\cmake\\debug\\x86\" --target opencv_jni_shared",
+			"buildCommand" : "C:\\Users\\Codebusters\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\Codebusters\\Documents\\FTC 2019 Skystone\\Software\\Experimental-master\\Experimental\\OpenCV\\.externalNativeBuild\\cmake\\debug\\x86\" --target opencv_jni_shared",
 			"buildType" : "debug",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=C:/Users/User1/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/User1/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot    -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -O0 -fno-limit-debug-info  -fPIC    -c ",
-					"src" : "C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/libcxx_helper/dummy.cpp",
-					"workingDirectory" : "C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/.externalNativeBuild/cmake/debug/x86"
+					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=C:/Users/Codebusters/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Codebusters/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot    -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -O0 -fno-limit-debug-info  -fPIC    -c ",
+					"src" : "C:/Users/Codebusters/Documents/FTC 2019 Skystone/Software/Experimental-master/Experimental/OpenCV/libcxx_helper/dummy.cpp",
+					"workingDirectory" : "C:/Users/Codebusters/Documents/FTC 2019 Skystone/Software/Experimental-master/Experimental/OpenCV/.externalNativeBuild/cmake/debug/x86"
 				}
 			],
-			"output" : "C:/Users/User1/Documents/FTC 2019 Skystone/Software/SkyStone-5.2 - Experimental/OpenCV/.externalNativeBuild/cmake/debug/x86/libopencv_jni_shared.a",
-			"toolchain" : "4235365433"
+			"output" : "C:/Users/Codebusters/Documents/FTC 2019 Skystone/Software/Experimental-master/Experimental/OpenCV/.externalNativeBuild/cmake/debug/x86/libopencv_jni_shared.a",
+			"toolchain" : "4155011853"
 		}
 	},
 	"toolchains" : 
 	{
-		"4235365433" : 
+		"4155011853" : 
 		{
-			"cCompilerExecutable" : "C:/Users/User1/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
-			"cppCompilerExecutable" : "C:/Users/User1/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+			"cCompilerExecutable" : "C:/Users/Codebusters/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "C:/Users/Codebusters/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
 		}
 	}
 }
