@@ -63,6 +63,9 @@ public class odometryPositionUpdate implements Runnable{
 
         //Position update equations using 4-wheel mecanum inputs, see
         //https://github.com/acmerobotics/road-runner/blob/master/doc/pdf/Mobile_Robot_Kinematics_for_FTC.pdf
+//        odometryX = odometryX + (deltaFL + deltaFR + deltaRL + deltaRR)/4;  //[inch]
+//        odometryY = odometryY + (-deltaFL + deltaFR + deltaRL - deltaRR)/4;  //[inch]
+//        odometryTheta = odometryTheta + (-deltaFL + deltaFR - deltaRL + deltaRR)/4/(trackWidth+wheelBase);  //[inch]
         odometryX = odometryX + (deltaFL + deltaFR + deltaRL + deltaRR)/4;  //[inch]
         odometryY = odometryY + (-deltaFL + deltaFR + deltaRL - deltaRR)/4;  //[inch]
         odometryTheta = odometryTheta + (-deltaFL + deltaFR - deltaRL + deltaRR)/4/(trackWidth+wheelBase);  //[inch]
@@ -72,14 +75,14 @@ public class odometryPositionUpdate implements Runnable{
      * Returns the robot's delta x in inches
      */
     public double returnOdometryX(){
-        return odometryX;  //[inch];  This is the absolute x position of the robot, but does not account for initial robot placement on the field
+        return -odometryY;  //[inch];  This is the absolute x position of the robot, but does not account for initial robot placement on the field.  Note!  Axis swap between X and Y
     }
 
     /**
      * Returns the robot's delta y in inches
      */
     public double returnOdometryY(){
-        return odometryY;  //[inch];  This is the absolute y position of the robot, but does not account for initial robot placement on the field
+        return odometryX;  //[inch];  This is the absolute y position of the robot, but does not account for initial robot placement on the field.  Note!  Axis swap between X and Y
     }
 
     /**

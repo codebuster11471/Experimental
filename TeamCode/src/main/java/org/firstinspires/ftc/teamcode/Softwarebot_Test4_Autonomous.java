@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Autonomous(name="Autonomous Test3", group="Codebusters")
+@Autonomous(name="Autonomous Test4", group="Codebusters")
 //@Disabled
 public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
@@ -60,8 +60,8 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
     double absPosnY = 0;  //Absolute y position storage variable
     double absPosnTheta = 0;  //Absolute theta position storage variable
 
-    static final double trackWidth = 16;  //TODO Left-right distance between wheels (in inches)
-    static final double wheelBase = 16;  //TODO Front-back distance between wheels (in inches)
+    static final double trackWidth = 4;  //TODO Left-right distance between wheels (in inches)
+    static final double wheelBase = 4;  //TODO Front-back distance between wheels (in inches)
     static final double countsPerMotorRev = 1120;  //TODO Pull from motor specifications
     static final double driveGearReduction = 1.0;  //This is < 1.0 if geared UP
     static final double slipFactor = 1.0;  //TODO
@@ -71,16 +71,12 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    pidDriveCalculator pidDriveCalculator;
-
-
-
 
     @Override
     public void runOpMode() {
         //Intialize the computer vision detector
         detector = new modifiedGoldDetector(); //Create detector
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); //Initialize it with the app context and camera
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.FRONT); //Initialize it with the app context and camera
         detector.enable(); //Start the detector
 
         //Initialize the drivetrain
@@ -92,9 +88,6 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorRL.setDirection(DcMotor.Direction.REVERSE);
         motorRR.setDirection(DcMotor.Direction.FORWARD);
-        double drive = 0;  //Drive command
-        double strafe = 0;  //Strafe command
-        double turn = 0;  //Turn command
 
         //Reset encoders
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,107 +118,121 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         //Disable the detector
         if(detector != null) detector.disable();
 
-        //Start the odometry processing thread
-        odometryPositionUpdate positionUpdate = new odometryPositionUpdate(motorFL, motorFR, motorRL, motorRR, inchPerCount, trackWidth, wheelBase, 75);
-        Thread odometryThread = new Thread(positionUpdate);
-        odometryThread.start();
-        runtime.reset();
 
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            absPosnX = startPosnX + positionUpdate.returnOdometryX();
-            absPosnY = startPosnY + positionUpdate.returnOdometryY();
-            absPosnTheta = startPosnTheta + positionUpdate.returnOdometryTheta();
+            pidDriveCommand(0, 24, 0, 0.55, 5);
+            pidDriveCommand(0, 24, -90, 0.55, 2);
+            pidDriveCommand(24, 24, -90, 0.55, 5);
+            pidDriveCommand(24, 24, -180, 0.55, 2);
+            pidDriveCommand(24, 0, -180, 0.55, 5);
+            pidDriveCommand(24, 0, -270, 0.55, 5);
+            pidDriveCommand(0, 0, -270, 0.55, 5);
+//            pidDriveCommand(0, 0, 90, 0.8, 3);
+//            pidDriveCommand(0, 0, 180, 0.8, 3);
+//            pidDriveCommand(0, 0, 270, 0.8, 3);
+//            pidDriveCommand(0, 0, 0, 0.8, 3);
 
-            telemetry.addData("X Position [in]", absPosnX);
-            telemetry.addData("Y Position [in]", absPosnY);
-            telemetry.addData("Orientation [deg]", absPosnTheta);
-            telemetry.addData("Thread Active", odometryThread.isAlive());
-            telemetry.update();
 
-////Debug:  Drive forward for 3.0 seconds and make sure telemetry is correct
-//            if (runtime.seconds() < 3.0) {
-//                motorFL.setPower(0.25);
-//                motorFR.setPower(0.25);
-//                motorRL.setPower(0.25);
-//                motorRR.setPower(0.25);
-//            }else {
-//                motorFL.setPower(0);
-//                motorFR.setPower(0);
-//                motorRL.setPower(0);
-//                motorRR.setPower(0);
-//            }
-//
-            array =  pidDriveCalculator(absPosnX, absPosnY, absPosnTheta, 12, 0, 0, 0.5);
 
-            drive = pidDriveCalculator.returnDriveCmd;
-            strafe = pidDriveCalculator.returnStrafeCmd;
-            turn = pidDriveCalculator.returnTurnCmd;
 
-            // Send calculated power to wheels using mecanum equations
-            motorFL.setPower(drive + turn + strafe);
-            motorFR.setPower(drive - turn - strafe);
-            motorRL.setPower(drive + turn - strafe);
-            motorRR.setPower(drive - turn + strafe);
 
         }
         //Stop the odometry processing thread
-        odometryThread.interrupt();
+//        odometryThread.interrupt();
     }
 
 
 
-    public double[] pidDriveCalculator(double absPosnX, double absPosnY, double absPosnTheta, double xTarget, double yTarget, double thetaTarget, double maxPower){
-        //Position declaration
-//        double xCurrent, yCurrent, thetaCurrent;  //[inch]
-//        double xTarget, yTarget, thetaTarget;  //[inch]
+    public void pidDriveCommand(double xTarget, double yTarget, double thetaTarget, double maxPower, double timeout){
+        //Start the odometry processing thread
+        odometryPositionUpdate positionUpdate = new odometryPositionUpdate(motorFL, motorFR, motorRL, motorRR, inchPerCount, trackWidth, wheelBase, 75);
+        Thread odometryThread = new Thread(positionUpdate);
+        odometryThread.start();
 
         //PID controller declarations
-        double Kp = 0.1;  //[--]
-        double Ki = 0;  //[--]
-        double Kd = 0;  //[--]
-        double xError;  //[in]
-        double yError;  //[in]
-        double thetaError;  //[deg]
+        double Kp = 0.06;  //[--]
+        double Ki = 0.00005;  //[--]
+        double Kd = 0.008*0;  //[--]
+        double strafeError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
+        double driveError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
+        double turnError = 1;  //[deg];  Initialize to 1 so it is larger than turnTol
+        double strafeIntegral = 0;  //[in]
+        double driveIntegral = 0;  //[in]
+        double turnIntegral = 0;  //[deg]
+        double strafeDerivative = 0;  //[in]
+        double driveDerivative = 0;  //[in]
+        double turnDerivative = 0;  //[deg]
+        double prevStrafeError = 0;
+        double prevDriveError = 0;
+        double prevTurnError = 0;
+        double strafeDriveTol = 0.1;  //[inch]; Allowable strafe/drive error before exiting PID loop
+        double turnTol = 0.1;  //[deg]; Allowable turn error before exiting PID loop
+        boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
 
         //Output declarations
-//        double maxPower;  //[%]; Maximum output value
         double driveCmd = 0;  //[%]; Drive command = 0 - 1.00
         double strafeCmd = 0;  //[%]; Strafe command = 0 - 1.00
         double turnCmd = 0;  //[%]; Turn command = 0 - 1.00
-        double[] array = {0, 0, 0};
 
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-//            this.xCurrent = absPosnX;  //[inch];  Current x position
-//            this.yCurrent = absPosnY;  //[inch];  Current y position
-//            this.thetaCurrent = absPosnTheta;  //[deg];  Current heading
-//            this.xTarget = xTarget;  //[inch];  Target x position
-//            this.yTarget = yTarget;  //[inch];  Target y position
-//            this.thetaTarget = thetaTarget;  //[deg];  Target heading
-//            this.maxPower = maxPower;  //[%];  Maximum output power
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < timeout){
+            //Get current positions
+            absPosnX = startPosnX + positionUpdate.returnOdometryX();
+            absPosnY = startPosnY + positionUpdate.returnOdometryY();
+            absPosnTheta = startPosnTheta + positionUpdate.returnOdometryTheta();
 
             //Calculate error
-            xError = xTarget - absPosnX;
-            yError = yTarget - absPosnX;
-            thetaError = thetaTarget - absPosnX;
+            strafeError = xTarget - absPosnX;
+            driveError = yTarget - absPosnY;
+            turnError = thetaTarget - absPosnTheta;
+
+
+            if (Math.abs(strafeError) < 1){
+            strafeIntegral = strafeIntegral + strafeError*0.02;
+            } else strafeIntegral = 0;
+
+            if (Math.abs(driveError) < 1){
+                driveIntegral = driveIntegral + driveError*0.02;
+            } else driveIntegral = 0;
+
+            if (Math.abs(turnError) < 1) {
+                turnIntegral = turnIntegral + turnError*0.02;
+            } else turnIntegral = 0;
+
+            strafeDerivative = (strafeError - prevStrafeError)/0.02;
+            driveDerivative = (driveError - prevDriveError)/0.02;
+            turnDerivative = (turnError - prevTurnError)/0.02;
+
+            prevStrafeError = strafeError;
+            prevDriveError = driveError;
+            prevTurnError = turnError;
 
             //PID summation
-            driveCmd = Kp * yError;
-            strafeCmd = Kp * xError;
-            turnCmd = Kp * thetaError;
+            driveCmd = Kp*driveError + Ki*driveIntegral + Kd*driveDerivative;
+            strafeCmd = Kp*strafeError + Ki*strafeIntegral + Kd*strafeDerivative;
+            turnCmd = -Kp*turnError - Ki*turnIntegral - Kd*turnDerivative;
 
             //Clip values within maximum specified power range
             driveCmd = Range.clip(driveCmd, -maxPower, maxPower);
             strafeCmd = Range.clip(strafeCmd, -maxPower, maxPower);
             turnCmd = Range.clip(turnCmd, -maxPower, maxPower);
-            array[0] = driveCmd;
-            array[1] = strafeCmd;
-            array[2] = turnCmd;
+
+            //Send calculated power to wheels using mecanum equations
+            motorFL.setPower(driveCmd + strafeCmd + turnCmd);
+            motorFR.setPower(driveCmd - strafeCmd - turnCmd);
+            motorRL.setPower(driveCmd - strafeCmd + turnCmd);
+            motorRR.setPower(driveCmd + strafeCmd - turnCmd);
+
+            //Telemetry
+            telemetry.addData("X Position [in]", absPosnX);
+            telemetry.addData("Y Position [in]", absPosnY);
+            telemetry.addData("Orientation [deg]", absPosnTheta);
+            telemetry.addData("Drive", driveCmd);
+            telemetry.addData("Strafe", strafeCmd);
+            telemetry.addData("Turn", turnCmd);
+            telemetry.update();
         }
-        return array;
     }
-
-
 }
