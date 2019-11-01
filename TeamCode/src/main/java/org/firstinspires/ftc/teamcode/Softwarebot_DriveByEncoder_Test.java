@@ -72,22 +72,23 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
     /* Declare OpMode members. */
     private DcMotor motorFL = null;
     private DcMotor motorFR = null;
-//    private DcMotor motorRL = null;
-//    private DcMotor motorRR = null;
+    private DcMotor motorRL = null;
+    private DcMotor motorRR = null;
 
-    double[] position = {0,0};
-    private double absPositionLeft = 0;
-    private double absPositionRight = 0;
+    double[] positionTemp = {0,0,0};
+    private double absPositionLeft = 0;  //Initialize robot position here
+    private double absPositionRight = 0;  //Initialize robot position here
+    private double absTheta = 0;  //Initialize robot position here
 
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.5;
-    static final double     TURN_SPEED              = 0.5;
+    static final double     countsPerMotorRev = 1440;  // Pull from motor specifications
+    static final double     driveGearReduction = 1.0;  // This is < 1.0 if geared UP
+    static final double     slipFactor = 1.0;  //TODO
+    static final double     wheelDiameter = 4.0;  // Wheel diameter in inches
+    static final double     countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
+    static final double     DRIVE_SPEED = 0.5;
+    static final double     TURN_SPEED = 0.5;
 
     @Override
     public void runOpMode() {
@@ -96,13 +97,14 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-//        robot.init(hardwareMap);
+
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-//        motorRL = hardwareMap.get(DcMotor.class, "motorRL");
-//        motorRR = hardwareMap.get(DcMotor.class, "motorRR");
+        motorRL = hardwareMap.get(DcMotor.class, "motorRL");
+        motorRR = hardwareMap.get(DcMotor.class, "motorRR");
 
         motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorRR.setDirection(DcMotor.Direction.REVERSE);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
@@ -110,35 +112,39 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 //        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d : %7d",
-                motorFL.getCurrentPosition(), motorFR.getCurrentPosition());
-        telemetry.update();
+//        telemetry.addData("Path0",  "Starting at %7d : %7d",
+//                motorFL.getCurrentPosition(), motorFR.getCurrentPosition());
+//        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        position = encoderDrive(DRIVE_SPEED,  48,  48, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        absPositionLeft = position[0];
-        absPositionRight = position[1];
+        positionTemp = encoderDrive(DRIVE_SPEED,  48,  48, 10.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        absPositionLeft = positionTemp[0];
+        absPositionRight = positionTemp[1];
         telemetry.addData("", "Final absolute position: %7.3f : %7.3f", absPositionLeft , absPositionRight);
         telemetry.update();
         sleep(3000);
-        position = encoderDrive(TURN_SPEED,   12, -12, 10.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        absPositionLeft = position[0];
-        absPositionRight = position[1];
+        positionTemp = encoderDrive(TURN_SPEED,   12, -12, 10.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        absPositionLeft = positionTemp[0];
+        absPositionRight = positionTemp[1];
         telemetry.addData("", "Final absolute position: %7.3f : %7.3f", absPositionLeft , absPositionRight);
         telemetry.update();
         sleep(3000);
-        position = encoderDrive(DRIVE_SPEED, -24, -24, 10.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        absPositionLeft = position[0];
-        absPositionRight = position[1];
+        positionTemp = encoderDrive(DRIVE_SPEED, -24, -24, 10.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        absPositionLeft = positionTemp[0];
+        absPositionRight = positionTemp[1];
         telemetry.addData("", "Final absolute position: %7.3f : %7.3f", absPositionLeft , absPositionRight);
         telemetry.update();
         sleep(3000);
@@ -171,8 +177,8 @@ public class Softwarebot_DriveByEncoder_Test extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = motorFL.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = motorFR.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = motorFL.getCurrentPosition() + (int)(leftInches * countsPerInch);
+            newRightTarget = motorFR.getCurrentPosition() + (int)(rightInches * countsPerInch);
             motorFL.setTargetPosition(newLeftTarget);
             motorFR.setTargetPosition(newRightTarget);
 
