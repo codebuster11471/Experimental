@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.Range;
 /**
  * Created by Codebusters in 2019.
  */
-class pidDriveCalculator{
+public class pidDriveCalculator{
 
     //Position declaration
     double xCurrent, yCurrent, thetaCurrent;  //[inch]
@@ -28,7 +28,7 @@ class pidDriveCalculator{
     /**
      * Import values and assign locally.  Input units must be as specified
      */
-    public void pidDriveCalculator(double absPosnX, double absPosnY, double absPosnTheta, double xTarget, double yTarget, double thetaTarget, double maxPower){
+    public pidDriveCalculator(double absPosnX, double absPosnY, double absPosnTheta, double xTarget, double yTarget, double thetaTarget, double maxPower){
         this.xCurrent = absPosnX;  //[inch];  Current x position
         this.yCurrent = absPosnY;  //[inch];  Current y position
         this.thetaCurrent = absPosnTheta;  //[deg];  Current heading

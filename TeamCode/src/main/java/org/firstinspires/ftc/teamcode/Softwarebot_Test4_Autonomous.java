@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 
 @Autonomous(name="Autonomous Test3", group="Codebusters")
@@ -69,6 +70,10 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    pidDriveCalculator pidDriveCalculator;
+
+
 
 
     @Override
@@ -151,8 +156,9 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 //                motorRL.setPower(0);
 //                motorRR.setPower(0);
 //            }
+//
+            array =  pidDriveCalculator(absPosnX, absPosnY, absPosnTheta, 12, 0, 0, 0.5);
 
-            drive = pidDriveCalculator(absPosnX, absPosnY, absPosnTheta, 12, 0, 0, 0.5);
             drive = pidDriveCalculator.returnDriveCmd;
             strafe = pidDriveCalculator.returnStrafeCmd;
             turn = pidDriveCalculator.returnTurnCmd;
@@ -167,4 +173,59 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         //Stop the odometry processing thread
         odometryThread.interrupt();
     }
+
+
+
+    public double[] pidDriveCalculator(double absPosnX, double absPosnY, double absPosnTheta, double xTarget, double yTarget, double thetaTarget, double maxPower){
+        //Position declaration
+//        double xCurrent, yCurrent, thetaCurrent;  //[inch]
+//        double xTarget, yTarget, thetaTarget;  //[inch]
+
+        //PID controller declarations
+        double Kp = 0.1;  //[--]
+        double Ki = 0;  //[--]
+        double Kd = 0;  //[--]
+        double xError;  //[in]
+        double yError;  //[in]
+        double thetaError;  //[deg]
+
+        //Output declarations
+//        double maxPower;  //[%]; Maximum output value
+        double driveCmd = 0;  //[%]; Drive command = 0 - 1.00
+        double strafeCmd = 0;  //[%]; Strafe command = 0 - 1.00
+        double turnCmd = 0;  //[%]; Turn command = 0 - 1.00
+        double[] array = {0, 0, 0};
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+//            this.xCurrent = absPosnX;  //[inch];  Current x position
+//            this.yCurrent = absPosnY;  //[inch];  Current y position
+//            this.thetaCurrent = absPosnTheta;  //[deg];  Current heading
+//            this.xTarget = xTarget;  //[inch];  Target x position
+//            this.yTarget = yTarget;  //[inch];  Target y position
+//            this.thetaTarget = thetaTarget;  //[deg];  Target heading
+//            this.maxPower = maxPower;  //[%];  Maximum output power
+
+            //Calculate error
+            xError = xTarget - absPosnX;
+            yError = yTarget - absPosnX;
+            thetaError = thetaTarget - absPosnX;
+
+            //PID summation
+            driveCmd = Kp * yError;
+            strafeCmd = Kp * xError;
+            turnCmd = Kp * thetaError;
+
+            //Clip values within maximum specified power range
+            driveCmd = Range.clip(driveCmd, -maxPower, maxPower);
+            strafeCmd = Range.clip(strafeCmd, -maxPower, maxPower);
+            turnCmd = Range.clip(turnCmd, -maxPower, maxPower);
+            array[0] = driveCmd;
+            array[1] = strafeCmd;
+            array[2] = turnCmd;
+        }
+        return array;
+    }
+
+
 }
