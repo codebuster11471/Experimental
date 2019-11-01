@@ -33,14 +33,17 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.skystone.modifiedGoldDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Autonomous Test2", group="Codebusters")
+
+@Autonomous(name="Autonomous Test3", group="Codebusters")
 //@Disabled
-public class SoftwareBot_Test2_Autonomous extends OpMode
-{
+public class Softwarebot_Test3_Autonomous extends LinearOpMode {
+
     //Detector declaration
     private modifiedGoldDetector detector;
 
@@ -51,24 +54,27 @@ public class SoftwareBot_Test2_Autonomous extends OpMode
     private DcMotor motorRR = null;
 
     //Odometry declarations
-    double[] positionTemp = {0,0,0};  //Storage variable
-    private double absPositionLeft = 0;  //Initialize robot position here
-    private double absPositionRight = 0;  //Initialize robot position here
-    private double absTheta = 0;  //Initialize robot position here
+    double startPosnX = 0;  //Define robot position here
+    double startPosnY = 0;  //Define robot position here
+    double startPosnTheta = 0;  //Define robot position here
+    double absPosnX = 0;  //Absolute x position storage variable
+    double absPosnY = 0;  //Absolute y position storage variable
+    double absPosnTheta = 0;  //Absolute theta position storage variable
 
-    static final double countsPerMotorRev = 1440;  //TODO Pull from motor specifications
+    static final double trackWidth = 16;  //TODO Left-right distance between wheels (in inches)
+    static final double wheelBase = 16;  //TODO Front-back distance between wheels (in inches)
+    static final double countsPerMotorRev = 1120;  //TODO Pull from motor specifications
     static final double driveGearReduction = 1.0;  //This is < 1.0 if geared UP
     static final double slipFactor = 1.0;  //TODO
-    static final double wheelDiameter = 4.0;  //Wheel diameter in inches
+    static final double wheelDiameter = 4.0;  //Wheel diameter (in inches)
     static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
-//        static final double DRIVE_SPEED = 0.5;
-//        static final double TURN_SPEED = 0.5;
-//        private ElapsedTime runtime = new ElapsedTime();
+
+    private ElapsedTime runtime = new ElapsedTime();
 
 
     @Override
-    public void init() {
+    public void runOpMode() {
         //Intialize the computer vision detector
         detector = new modifiedGoldDetector(); //Create detector
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); //Initialize it with the app context and camera
@@ -93,48 +99,61 @@ public class SoftwareBot_Test2_Autonomous extends OpMode
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    /*
-     * Code to run REPEATEDLY when the driver hits INIT
-     */
-    @Override
-    public void init_loop() {
-        OdometryGlobalCoordinatePositionChange globalPositionUpdate = new OdometryGlobalCoordinatePositionChange(motorFL, motorFR, motorRL, motorRR, inchPerCount, 75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
 
         telemetry.addData("IsFound: ", detector.isFound());
         telemetry.addData(">", "Waiting for start");
         telemetry.update();
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
 
 
+        //TODO Pass skystone location to storage
 
+        //Wait for the game to start (driver presses PLAY)
+        waitForStart();
 
-    }
+        /**
+         * *****************
+         * OpMode Begins Here
+         * *****************
+         */
 
-    /*
-     * Code to run REPEATEDLY when the driver hits PLAY
-     */
-    @Override
-    public void loop() {
-
-    }
-
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-        // Disable the detector
+        //Disable the detector
         if(detector != null) detector.disable();
-    }
 
+        //Start the odometry processing thread
+        odometryPositionUpdate positionUpdate = new odometryPositionUpdate(motorFL, motorFR, motorRL, motorRR, inchPerCount, trackWidth, wheelBase, 75);
+        Thread odometryThread = new Thread(positionUpdate);
+        odometryThread.start();
+        runtime.reset();
+
+        //Run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+
+            absPosnX = startPosnX + positionUpdate.returnOdometryX();
+            absPosnY = startPosnY + positionUpdate.returnOdometryY();
+            absPosnTheta = startPosnTheta + positionUpdate.returnOdometryTheta();
+
+            telemetry.addData("X Position [in]", absPosnX);
+            telemetry.addData("Y Position [in]", absPosnY);
+            telemetry.addData("Orientation [deg]", absPosnTheta);
+            telemetry.addData("Thread Active", odometryThread.isAlive());
+            telemetry.update();
+
+//Debug:  Drive forward for 3.0 seconds and make sure telemetry is correct
+            if (runtime.seconds() < 3.0) {
+                motorFL.setPower(0.25);
+                motorFR.setPower(0.25);
+                motorRL.setPower(0.25);
+                motorRR.setPower(0.25);
+            }else {
+                motorFL.setPower(0);
+                motorFR.setPower(0);
+                motorRL.setPower(0);
+                motorRR.setPower(0);
+            }
+
+
+        }
+        //Stop the odometry processing thread
+        odometryThread.interrupt();
+    }
 }
