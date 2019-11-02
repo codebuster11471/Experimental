@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Softwarebot Basic Driver Speed Control", group="Iterative Opmode")
-@Disabled
+//@Disabled
 public class Softwarebot_Basic_Driver_Op_SpeedControl extends OpMode
 {
     // Declare OpMode members.
@@ -87,6 +87,8 @@ public class Softwarebot_Basic_Driver_Op_SpeedControl extends OpMode
 
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");

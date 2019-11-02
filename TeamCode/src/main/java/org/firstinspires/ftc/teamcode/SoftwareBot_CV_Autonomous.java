@@ -37,9 +37,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.opencv.core.Rect;
 
-@Autonomous(name="Autonomous Test", group="Codebusters")
+@Autonomous(name="CV Test", group="Codebusters")
 //@Disabled
-public class SoftwareBot_Test_Autonomous extends OpMode
+public class SoftwareBot_CV_Autonomous extends OpMode
 {
     // Detector object
     private modifiedGoldDetector detector;
