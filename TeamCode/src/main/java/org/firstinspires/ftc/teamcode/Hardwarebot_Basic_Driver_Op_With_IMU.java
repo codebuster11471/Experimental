@@ -30,16 +30,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -58,7 +60,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Hardwarebot Basic Driver", group="Iterative Opmode")
+@TeleOp(name="Hardwarebot with IMU", group="Iterative Opmode")
 //@Disabled
 public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
 {
@@ -90,22 +92,18 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
     private double intakeOpTemp = intakeOpStop;  //Initialize at stop
     private double intakeOpFinal = intakeOpStop;  //Initialize at stop
     private double outtakeOpStop = 0.00;  //0%
-    private double outtakeOpStart = -1.0;  //-100%
+    private double outtakeOpStart = 1.0;  //100%
     private double outtakeOpLast = outtakeOpStop;  //Initialize at stop
     private double outtakeOpTemp = outtakeOpStop;  //Initialize at stop
     private double outtakeOpFinal = outtakeOpStop;  //Initialize at stop
-    private double drive1temp = 0;
-    private double strafe1temp = 0;
-//----------------------------------------------------------------------------------------------
-    // State
-    //----------------------------------------------------------------------------------------------
-
-    // The IMU sensor object
+    //IMU declarations
     BNO055IMU imu;
-
-    // State used for updating telemetry
     Orientation angles;
-    Acceleration gravity;
+    private double headingOffset = 0;  //[deg];  Initial offset of the robot
+    private double drive1temp = 0;  //Storage variable
+    private double strafe1temp = 0;  //Storage variable
+    // Distance Sensor Declarations
+    private DistanceSensor sensorRange;
 
 
     /*
@@ -131,18 +129,18 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
         motorRR.setDirection(DcMotor.Direction.FORWARD);
         intakeR.setDirection(DcMotor.Direction.REVERSE);
         intakeL.setDirection(DcMotor.Direction.FORWARD);
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
+
+        // Set up the parameters with which we will use our IMU.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        // Tell the driver that initialization is complete.
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        // you can use this as a regular DistanceSensor.
+        sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
+
+        // you can also cast this to a Rev2mDistanceSensor if you want to use added
+        // methods associated with the Rev2mDistanceSensor class.
+        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
     }
 
     /*
@@ -158,6 +156,7 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
     @Override
     public void start() {
         runtime.reset();
+
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
@@ -167,13 +166,13 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
      */
     @Override
     public void loop() {
-// Acquiring the angles is relatively expensive; we don't want
-        // to do that in each of the three items that need that info, as that's
-        // three times the necessary expense.
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+//*******POLL IMU FOR DATA************************************************************************//
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("firstAngle",  angles.firstAngle);
-        telemetry.addData("secondAngle", angles.secondAngle);
-        telemetry.addData("thirdAngle", angles.thirdAngle);
+//************************************************************************************************//
+
+
 //*******DRIVE OPERATION**************************************************************************//
         // Left stick to go forward and strafe, and right stick to turn.
         double drive1 = -gamepad1.left_stick_y;  //Driver 1 drive command
@@ -191,8 +190,9 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
         }
         driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
 
-        drive1temp = strafe1*Math.cos(Math.toRadians(angles.firstAngle)) - drive1*Math.sin(Math.toRadians(angles.firstAngle));
-        strafe1temp = strafe1*Math.sin(Math.toRadians(angles.firstAngle)) + drive1*Math.cos(Math.toRadians(angles.firstAngle));
+        //IMU correction, see Wikipedia topic "Rotation Matrix"
+        drive1temp = drive1*Math.cos(Math.toRadians(angles.firstAngle)) - strafe1*Math.sin(Math.toRadians(angles.firstAngle));
+        strafe1temp = drive1*Math.sin(Math.toRadians(angles.firstAngle)) + strafe1*Math.cos(Math.toRadians(angles.firstAngle));
         drive1 = drive1temp;
         strafe1 = strafe1temp;
 
@@ -232,6 +232,14 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
         }
+        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+        if (sensorRange.getDistance (DistanceUnit.INCH) < 5) {
+            //Turn off intake if it is already on
+            intakeOpFinal = 0.00;
+            intakeOpTemp = 0.00;
+            intakeOpLast = 0.00;
+            telemetry.addLine("block detected intake off");}
+
         intakeOpFinal = intakeOpTemp;  //intake Motor speed
 
         // Toggle Outtake when pressing Right Bumper
@@ -250,13 +258,16 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
         outtakeOpFinal = outtakeOpTemp;  //outtake Motor speed
 
         // Send calculated power to intake/outtake Motors
-        intakeR.setPower(intakeOpFinal + outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
-        intakeL.setPower(intakeOpFinal + outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+        intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+        intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+
+
 //************************************************************************************************//
+        telemetry.addData("deviceName",sensorRange.getDeviceName() );
+        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
 
-
-        // Add telemetry
-//        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        // Rev2mDistanceSensor specific methods.
+ //*******************************************************************************************************//
 
         telemetry.update();
 
@@ -269,5 +280,4 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
     public void stop() {
         telemetry.addLine("kthxbye");
     }
-
 }
