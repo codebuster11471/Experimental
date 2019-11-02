@@ -233,7 +233,7 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
             outtakeOpLast = 0.00;
         }
         telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
-        if (sensorRange.getDistance (DistanceUnit.INCH) < 5) {
+            if (sensorRange.getDistance (DistanceUnit.INCH) < 5) {
             //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;
@@ -247,9 +247,17 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;
+        } if (sensorRange.getDistance (DistanceUnit.INCH) > 13) {
+            //Turn off outtake if it is already on
+            outtakeOpFinal = 0.00;
+            outtakeOpTemp = 0.00;
+            outtakeOpLast = 0.00;
+            telemetry.addLine("block ejected outtake off");
         }
+
         if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
             outtakeOpLast = outtakeOpTemp;
+
             //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;
