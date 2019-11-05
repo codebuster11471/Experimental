@@ -69,6 +69,7 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
     static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
 
+    int skystoneLocation = -1;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -109,6 +110,8 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         //Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        skystoneLocation = detector.isFound();
+
         /**
          * *****************
          * OpMode Begins Here
@@ -122,17 +125,23 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            pidDriveCommand(0, 24, 0, 0.55, 5);
-            pidDriveCommand(0, 24, -90, 0.55, 2);
-            pidDriveCommand(24, 24, -90, 0.55, 5);
-            pidDriveCommand(24, 24, -180, 0.55, 2);
-            pidDriveCommand(24, 0, -180, 0.55, 5);
-            pidDriveCommand(24, 0, -270, 0.55, 5);
-            pidDriveCommand(0, 0, -270, 0.55, 5);
-//            pidDriveCommand(0, 0, 90, 0.8, 3);
-//            pidDriveCommand(0, 0, 180, 0.8, 3);
-//            pidDriveCommand(0, 0, 270, 0.8, 3);
-//            pidDriveCommand(0, 0, 0, 0.8, 3);
+
+            if(skystoneLocation == 1) {
+                pidDriveCommand(-12, 0, 0, 0.55, 2);
+                pidDriveCommand(-12, 24, 0, 0.55, 4);
+                pidDriveCommand(-12,-12, 0, 0.55, 4);
+            }
+            if(skystoneLocation == 2) {
+                pidDriveCommand(0, 24, 0, 0.55, 2);
+                pidDriveCommand(0, -12, 0, 0.55, 4);
+            }
+            if(skystoneLocation == 3) {
+                pidDriveCommand(12, 0, 0, 0.55, 2);
+                pidDriveCommand(12, 24, 0, 0.55, 4);
+                pidDriveCommand(12, -12, 0, 0.55, 4);
+            }
+
+
 
 
 
