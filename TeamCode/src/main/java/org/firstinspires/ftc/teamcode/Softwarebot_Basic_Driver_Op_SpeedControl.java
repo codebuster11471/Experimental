@@ -35,6 +35,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_FRONT_LEFT;
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_FRONT_RIGHT;
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_REAR_LEFT;
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_REAR_RIGHT;
+
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -73,10 +78,10 @@ public class Softwarebot_Basic_Driver_Op_SpeedControl extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
-        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        motorRL = hardwareMap.get(DcMotor.class, "motorRL");
-        motorRR = hardwareMap.get(DcMotor.class, "motorRR");
+        motorFL  = hardwareMap.get(DcMotor.class, MOTOR_FRONT_LEFT);
+        motorFR = hardwareMap.get(DcMotor.class, MOTOR_FRONT_RIGHT);
+        motorRL = hardwareMap.get(DcMotor.class, MOTOR_REAR_LEFT);
+        motorRR = hardwareMap.get(DcMotor.class, MOTOR_REAR_RIGHT);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery

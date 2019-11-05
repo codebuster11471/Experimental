@@ -34,6 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static org.firstinspires.ftc.teamcode.Constants.*;
+
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -94,12 +96,12 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
-        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        motorRL = hardwareMap.get(DcMotor.class, "motorRL");
-        motorRR = hardwareMap.get(DcMotor.class, "motorRR");
-        intakeR = hardwareMap.get(DcMotor.class, "intakeR");
-        intakeL = hardwareMap.get(DcMotor.class, "intakeL");
+        motorFL  = hardwareMap.get(DcMotor.class, MOTOR_FRONT_LEFT);
+        motorFR = hardwareMap.get(DcMotor.class, MOTOR_FRONT_RIGHT);
+        motorRL = hardwareMap.get(DcMotor.class, MOTOR_REAR_LEFT);
+        motorRR = hardwareMap.get(DcMotor.class, MOTOR_REAR_RIGHT);
+        intakeR = hardwareMap.get(DcMotor.class, MOTOR_INTAKE_RIGHT);
+        intakeL = hardwareMap.get(DcMotor.class, MOTOR_INTAKE_LEFT);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -192,7 +194,8 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         intakeOpFinal = intakeOpTemp;  //intake Motor speed
 
         // Toggle Outtake when pressing Right Bumper
-        if (gamepad2.right_bumper && outtakeOpLast < outtakeOpStart) {
+        if (gamepad2.right_bumper && outtakeOpLast <
+                outtakeOpStart) {
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;

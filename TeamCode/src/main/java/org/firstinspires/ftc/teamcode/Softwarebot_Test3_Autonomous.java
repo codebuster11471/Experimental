@@ -39,6 +39,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_FRONT_LEFT;
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_FRONT_RIGHT;
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_REAR_LEFT;
+import static org.firstinspires.ftc.teamcode.Constants.MOTOR_REAR_RIGHT;
+
 
 @Autonomous(name="Autonomous Test3", group="Codebusters")
 //@Disabled
@@ -81,10 +86,10 @@ public class Softwarebot_Test3_Autonomous extends LinearOpMode {
         detector.enable(); //Start the detector
 
         //Initialize the drivetrain
-        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
-        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        motorRL = hardwareMap.get(DcMotor.class, "motorRL");
-        motorRR = hardwareMap.get(DcMotor.class, "motorRR");
+        motorFL  = hardwareMap.get(DcMotor.class, MOTOR_FRONT_LEFT);
+        motorFR = hardwareMap.get(DcMotor.class, MOTOR_FRONT_RIGHT);
+        motorRL = hardwareMap.get(DcMotor.class, MOTOR_REAR_LEFT);
+        motorRR = hardwareMap.get(DcMotor.class, MOTOR_REAR_RIGHT);
         motorFL.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorRL.setDirection(DcMotor.Direction.REVERSE);

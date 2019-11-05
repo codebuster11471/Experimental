@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.renderscript.Sampler;
+
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.skystone.modifiedGoldDetector;
@@ -46,7 +48,7 @@ import static org.firstinspires.ftc.teamcode.Constants.MOTOR_REAR_RIGHT;
 
 @Autonomous(name="Autonomous Test4", group="Codebusters")
 //@Disabled
-public class Softwarebot_Test4_Autonomous extends LinearOpMode {
+public class Softwarebot_Test4_Autonomous_Fun_Test extends LinearOpMode {
 
     //Detector declaration
     private modifiedGoldDetector detector;
