@@ -127,19 +127,21 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
 
             if(skystoneLocation == 1) {
-                pidDriveCommand(-12, 0, 0, 0.55, 2);
-                pidDriveCommand(-12, 24, 0, 0.55, 4);
-                pidDriveCommand(-12,-12, 0, 0.55, 4);
+                pidDriveCommand(48, 0, 0, 0.55, 2);
+                pidDriveCommand(48, 24, 0, 0.55, 4);
+                pidDriveCommand(48,-12, 0, 0.55, 4);
             }
             if(skystoneLocation == 2) {
-                pidDriveCommand(0, 24, 0, 0.55, 2);
-                pidDriveCommand(0, -12, 0, 0.55, 4);
+                pidDriveCommand(0, 48, 0, 0.55, 4);
+                pidDriveCommand(0, 32.5, 0, 0.55, 2);
+                pidDriveCommand(-63, 41.5, 0, 0.55, 4);
             }
             if(skystoneLocation == 3) {
                 pidDriveCommand(12, 0, 0, 0.55, 2);
                 pidDriveCommand(12, 24, 0, 0.55, 4);
                 pidDriveCommand(12, -12, 0, 0.55, 4);
             }
+            break;
 
 
 
@@ -177,7 +179,7 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         double prevDriveError = 0;
         double prevTurnError = 0;
         double strafeDriveTol = 0.1;  //[inch]; Allowable strafe/drive error before exiting PID loop
-        double turnTol = 0.1;  //[deg]; Allowable turn error before exiting PID loop
+        double turnTol = 0.1;  //[deg]; Allowable turn error before exiting PID loo
         boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
 
         //Output declarations

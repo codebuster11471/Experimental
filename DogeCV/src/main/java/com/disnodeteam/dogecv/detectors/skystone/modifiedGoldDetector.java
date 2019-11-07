@@ -35,12 +35,12 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     public int skystoneLocation = -1;
 
 //define analysis zones
-    public Point sector1TLcorner = new Point(1, 160); //Sets the top left corner of first sector in pixel (x,y) coordinates
-    public Point sector1BRcorner = new Point(213, 320); //Sets the bottom right corner of first sector in pixel (x,y) coordinates
-    public Point sector2TLcorner = new Point(213, 160); //Sets the top left corner of second sector in pixel (x,y) coordinates
-    public Point sector2BRcorner = new Point(426, 320); //Sets the bottom right corner of second sector in pixel (x,y) coordinates
-    public Point sector3TLcorner = new Point(426, 160); //Sets the top left corner of third sector in pixel (x,y) coordinates
-    public Point sector3BRcorner = new Point(639, 320); //Sets the bottom right corner of third sector in pixel (x,y) coordinates
+    public Point sector1TLcorner = new Point(213, 213); //Sets the top left corner of first sector in pixel (x,y) coordinates
+    public Point sector1BRcorner = new Point(266, 275); //Sets the bottom right corner of first sector in pixel (x,y) coordinates
+    public Point sector2TLcorner = new Point(266, 213); //Sets the top left corner of second sector in pixel (x,y) coordinates
+    public Point sector2BRcorner = new Point(373, 275); //Sets the bottom right corner of second sector in pixel (x,y) coordinates
+    public Point sector3TLcorner = new Point(373, 213); //Sets the top left corner of third sector in pixel (x,y) coordinates
+    public Point sector3BRcorner = new Point(426, 275); //Sets the bottom right corner of third sector in pixel (x,y) coordinates
 
 //define storage variables
     MatOfDouble sector1Mean = new MatOfDouble();
