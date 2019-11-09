@@ -127,19 +127,19 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
 
             if(skystoneLocation == 1) {
-                pidDriveCommand(48, 0, 0, 0.55, 2);
-                pidDriveCommand(48, 24, 0, 0.55, 4);
-                pidDriveCommand(48,-12, 0, 0.55, 4);
+                pidDriveCommand(-16, 36, 0, 0.55, 4);
+                pidDriveCommand(-16, 24, 0, 0.55, 2);
+                pidDriveCommand(-48, 24, 0, 0.55, 4);
             }
             if(skystoneLocation == 2) {
-                pidDriveCommand(0, 48, 0, 0.55, 4);
-                pidDriveCommand(0, 32.5, 0, 0.55, 2);
-                pidDriveCommand(-63, 41.5, 0, 0.55, 4);
+                pidDriveCommand(0, 36, 0, 0.55, 4);
+                pidDriveCommand(0, 24, 0, 0.55, 2);
+                pidDriveCommand(-48, 24, 0, 0.55, 4);
             }
             if(skystoneLocation == 3) {
-                pidDriveCommand(12, 0, 0, 0.55, 2);
-                pidDriveCommand(12, 24, 0, 0.55, 4);
-                pidDriveCommand(12, -12, 0, 0.55, 4);
+                pidDriveCommand(16, 36, 0, 0.55, 4);
+                pidDriveCommand(16, 24, 0, 0.55, 2);
+                pidDriveCommand(-48, 24, 0, 0.55, 4);
             }
             break;
 

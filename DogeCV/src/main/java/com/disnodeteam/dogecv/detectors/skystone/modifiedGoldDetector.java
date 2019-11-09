@@ -35,12 +35,12 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
     public int skystoneLocation = -1;
 
 //define analysis zones
-    public Point sector1TLcorner = new Point(213, 213); //Sets the top left corner of first sector in pixel (x,y) coordinates
-    public Point sector1BRcorner = new Point(266, 275); //Sets the bottom right corner of first sector in pixel (x,y) coordinates
+    public Point sector1TLcorner = new Point(159, 213); //Sets the top left corner of first sector in pixel (x,y) coordinates
+    public Point sector1BRcorner = new Point(266, 300); //Sets the bottom right corner of first sector in pixel (x,y) coordinates
     public Point sector2TLcorner = new Point(266, 213); //Sets the top left corner of second sector in pixel (x,y) coordinates
-    public Point sector2BRcorner = new Point(373, 275); //Sets the bottom right corner of second sector in pixel (x,y) coordinates
+    public Point sector2BRcorner = new Point(373, 300); //Sets the bottom right corner of second sector in pixel (x,y) coordinates
     public Point sector3TLcorner = new Point(373, 213); //Sets the top left corner of third sector in pixel (x,y) coordinates
-    public Point sector3BRcorner = new Point(426, 275); //Sets the bottom right corner of third sector in pixel (x,y) coordinates
+    public Point sector3BRcorner = new Point(480, 300); //Sets the bottom right corner of third sector in pixel (x,y) coordinates
 
 //define storage variables
     MatOfDouble sector1Mean = new MatOfDouble();
@@ -119,11 +119,11 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
 
 
         if(skystoneLocation == 1){
-            Imgproc.putText(displayMat,"X", new Point(75,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
+            Imgproc.putText(displayMat,"X", new Point(173,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
         }else if (skystoneLocation == 2){
-            Imgproc.putText(displayMat,"X", new Point(275,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
+            Imgproc.putText(displayMat,"X", new Point(270,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
         }else if (skystoneLocation == 3){
-            Imgproc.putText(displayMat,"X", new Point(475,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
+            Imgproc.putText(displayMat,"X", new Point(367,getAdjustedSize().height - 185),0,5, new Scalar(200,0,255),10);
         }
 
         return displayMat;
