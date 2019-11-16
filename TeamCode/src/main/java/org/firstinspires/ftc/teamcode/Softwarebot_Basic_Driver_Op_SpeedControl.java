@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Softwarebot Basic Driver Speed Control", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class Softwarebot_Basic_Driver_Op_SpeedControl extends OpMode
 {
     // Declare OpMode members.

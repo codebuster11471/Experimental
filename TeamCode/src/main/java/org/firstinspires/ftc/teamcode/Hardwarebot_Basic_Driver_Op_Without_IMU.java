@@ -29,11 +29,22 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -49,9 +60,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Hardwarebot Basic Driver", group="Iterative Opmode")
-@Disabled
-public class Hardwarebot_Basic_Driver_Op extends OpMode
+@TeleOp(name="Hardwarebot without IMU", group="Iterative Opmode")
+//@Disabled
+public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
 {
     //Drive system declarations
     private ElapsedTime runtime = new ElapsedTime();
@@ -81,10 +92,12 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
     private double intakeOpTemp = intakeOpStop;  //Initialize at stop
     private double intakeOpFinal = intakeOpStop;  //Initialize at stop
     private double outtakeOpStop = 0.00;  //0%
-    private double outtakeOpStart = -1.0;  //-100%
+    private double outtakeOpStart = 1.0;  //100%
     private double outtakeOpLast = outtakeOpStop;  //Initialize at stop
     private double outtakeOpTemp = outtakeOpStop;  //Initialize at stop
     private double outtakeOpFinal = outtakeOpStop;  //Initialize at stop
+       // Distance Sensor Declarations
+    private DistanceSensor sensorRange;
 
 
     /*
@@ -111,8 +124,13 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         intakeR.setDirection(DcMotor.Direction.REVERSE);
         intakeL.setDirection(DcMotor.Direction.FORWARD);
 
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
+
+        // you can use this as a regular DistanceSensor.
+        sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
+
+        // you can also cast this to a Rev2mDistanceSensor if you want to use added
+        // methods associated with the Rev2mDistanceSensor class.
+        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
     }
 
     /*
@@ -128,6 +146,7 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
     @Override
     public void start() {
         runtime.reset();
+
     }
 
     /*
@@ -190,6 +209,14 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
         }
+        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+            if (sensorRange.getDistance (DistanceUnit.INCH) < 5) {
+            //Turn off intake if it is already on
+            intakeOpFinal = 0.00;
+            intakeOpTemp = 0.00;
+            intakeOpLast = 0.00;
+            telemetry.addLine("block detected intake off");}
+
         intakeOpFinal = intakeOpTemp;  //intake Motor speed
 
         // Toggle Outtake when pressing Right Bumper
@@ -197,9 +224,17 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;
+        } if (sensorRange.getDistance (DistanceUnit.INCH) > 13) {
+            //Turn off outtake if it is already on
+            outtakeOpFinal = 0.00;
+            outtakeOpTemp = 0.00;
+            outtakeOpLast = 0.00;
+            telemetry.addLine("block ejected outtake off");
         }
+
         if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
             outtakeOpLast = outtakeOpTemp;
+
             //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;
@@ -208,13 +243,16 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
         outtakeOpFinal = outtakeOpTemp;  //outtake Motor speed
 
         // Send calculated power to intake/outtake Motors
-        intakeR.setPower(intakeOpFinal + outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
-        intakeL.setPower(intakeOpFinal + outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+        intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+        intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+
+
 //************************************************************************************************//
+        telemetry.addData("deviceName",sensorRange.getDeviceName() );
+        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
 
-
-        // Add telemetry
-//        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        // Rev2mDistanceSensor specific methods.
+ //*******************************************************************************************************//
 
         telemetry.update();
 
@@ -227,5 +265,4 @@ public class Hardwarebot_Basic_Driver_Op extends OpMode
     public void stop() {
         telemetry.addLine("kthxbye");
     }
-
 }

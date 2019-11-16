@@ -52,6 +52,10 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
     private DcMotor motorRL = null;
     private DcMotor motorRR = null;
 
+    //Intake/outtake system declarations
+    private DcMotor intakeR = null;
+    private DcMotor intakeL = null;
+
     //Odometry declarations
     double startPosnX = 0;  //Define robot position here
     double startPosnY = 0;  //Define robot position here
@@ -90,6 +94,12 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         motorRL.setDirection(DcMotor.Direction.REVERSE);
         motorRR.setDirection(DcMotor.Direction.FORWARD);
 
+        intakeR = hardwareMap.get(DcMotor.class, "intakeR");
+        intakeL = hardwareMap.get(DcMotor.class, "intakeL");
+        intakeR.setDirection(DcMotor.Direction.REVERSE);
+        intakeL.setDirection(DcMotor.Direction.FORWARD);
+
+
         //Reset encoders
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -124,32 +134,52 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            intakeL.setPower(1);
+            intakeR.setPower(-1);
+            pidDriveCommand(-1, -1, 0, 0.00, 0.5);
+            intakeL.setPower(0);
+            intakeR.setPower(0);
 
             if(skystoneLocation == 1) {
+                intakeL.setPower(-1);
+                intakeR.setPower(-1);
                 pidDriveCommand(-16, 36, 0, 0.55, 4);
+                intakeL.setPower(0);
+                intakeR.setPower(0);
                 pidDriveCommand(-16, 24, 0, 0.55, 2);
                 pidDriveCommand(-48, 24, 0, 0.55, 4);
+                intakeL.setPower(1);
+                intakeR.setPower(1);
+                pidDriveCommand(-1, -1, 0, 0.00, 2);
             }
             if(skystoneLocation == 2) {
+                intakeL.setPower(-1);
+                intakeR.setPower(-1);
                 pidDriveCommand(0, 36, 0, 0.55, 4);
+                intakeL.setPower(0);
+                intakeR.setPower(0);
                 pidDriveCommand(0, 24, 0, 0.55, 2);
                 pidDriveCommand(-48, 24, 0, 0.55, 4);
+                intakeL.setPower(1);
+                intakeR.setPower(1);
+                pidDriveCommand(-1, -1, 0, 0.00, 2);
             }
             if(skystoneLocation == 3) {
+                intakeL.setPower(-1);
+                intakeR.setPower(-1);
                 pidDriveCommand(16, 36, 0, 0.55, 4);
+                intakeL.setPower(0);
+                intakeR.setPower(0);
                 pidDriveCommand(16, 24, 0, 0.55, 2);
                 pidDriveCommand(-48, 24, 0, 0.55, 4);
+                intakeL.setPower(1);
+                intakeR.setPower(1);
+                pidDriveCommand(-1, -1, 0, 0.00, 2);
             }
             break;
-
-
-
-
-
-
-
         }
+        intakeL.setPower(0);
+        intakeR.setPower(0);
         //Stop the odometry processing thread
 //        odometryThread.interrupt();
     }

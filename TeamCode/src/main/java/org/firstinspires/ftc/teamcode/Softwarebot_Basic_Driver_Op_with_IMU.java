@@ -59,7 +59,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 @TeleOp(name="Softwarebot Basic Driver with IMU", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class Softwarebot_Basic_Driver_Op_with_IMU extends OpMode
 {
     // Declare OpMode members.
