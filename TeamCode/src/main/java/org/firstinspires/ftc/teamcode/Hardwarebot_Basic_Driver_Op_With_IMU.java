@@ -248,7 +248,7 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;
-        } if (sensorRange.getDistance (DistanceUnit.INCH) > 13) {
+        } if (sensorRange.getDistance (DistanceUnit.INCH) > 11.5) {
             //Turn off outtake if it is already on
             outtakeOpFinal = 0.00;
             outtakeOpTemp = 0.00;
