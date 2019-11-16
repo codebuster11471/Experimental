@@ -41,7 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="Autonomous Test3", group="Codebusters")
-//@Disabled
+@Disabled
 public class Softwarebot_Test3_Autonomous extends LinearOpMode {
 
     //Detector declaration

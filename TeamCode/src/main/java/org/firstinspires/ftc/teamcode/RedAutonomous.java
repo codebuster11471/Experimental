@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.skystone.modifiedGoldDetector;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Autonomous(name="Autonomous Test4", group="Codebusters")
-@Disabled
-public class Softwarebot_Test4_Autonomous extends LinearOpMode {
+@Autonomous(name="Red Autonomous", group="Codebusters")
+//@Disabled
+public class RedAutonomous extends LinearOpMode {
 
     //Detector declaration
     private modifiedGoldDetector detector;
@@ -65,12 +64,12 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
     double absPosnY = 0;  //Absolute y position storage variable
     double absPosnTheta = 0;  //Absolute theta position storage variable
 
-    static final double trackWidth = 4;  //TODO Left-right distance between wheels (in inches)
-    static final double wheelBase = 4;  //TODO Front-back distance between wheels (in inches)
-    static final double countsPerMotorRev = 1120;  //TODO Pull from motor specifications
+    static final double trackWidth = 14.75;  //Left-right distance between wheels (in inches)
+    static final double wheelBase = 11.75;  //Front-back distance between wheels (in inches)
+    static final double countsPerMotorRev = 537.6;  //Andymark Orbital 20
     static final double driveGearReduction = 1.0;  //This is < 1.0 if geared UP
     static final double slipFactor = 1.0;  //TODO
-    static final double wheelDiameter = 4.0;  //Wheel diameter (in inches)
+    static final double wheelDiameter = 3.0;  //Wheel diameter (in inches)
     static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
 
@@ -90,15 +89,15 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorRL = hardwareMap.get(DcMotor.class, "motorRL");
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
-        motorRL.setDirection(DcMotor.Direction.REVERSE);
-        motorRR.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorRL.setDirection(DcMotor.Direction.FORWARD);
+        motorRR.setDirection(DcMotor.Direction.REVERSE);
 
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
-        intakeR.setDirection(DcMotor.Direction.REVERSE);
-        intakeL.setDirection(DcMotor.Direction.FORWARD);
+        intakeR.setDirection(DcMotor.Direction.FORWARD);
+        intakeL.setDirection(DcMotor.Direction.REVERSE);
 
 
         //Reset encoders
@@ -114,9 +113,6 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         telemetry.addData("IsFound: ", detector.isFound());
         telemetry.addData(">", "Waiting for start");
         telemetry.update();
-
-
-        //TODO Pass skystone location to storage
 
         //Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -135,49 +131,59 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            intakeL.setPower(1);
-            intakeR.setPower(-1);
-            pidDriveCommand(-1, -1, 0, 0.00, 0.5);
+
+            pidDriveCommand(0, 24, 0, 0.40, 5);
+            pidDriveCommand(-24, 24, 0, 0.40, 5);
+            intakeL.setPower(0.5);
+            intakeR.setPower(-0.5);
+            pidDriveCommand(0, 0, 0, 0, 0.5);
             intakeL.setPower(0);
             intakeR.setPower(0);
-
-            if(skystoneLocation == 1) {
-                intakeL.setPower(-1);
-                intakeR.setPower(-1);
-                pidDriveCommand(-16, 36, 0, 0.55, 4);
-                intakeL.setPower(0);
-                intakeR.setPower(0);
-                pidDriveCommand(-16, 24, 0, 0.55, 2);
-                pidDriveCommand(-48, 24, 0, 0.55, 4);
-                intakeL.setPower(1);
-                intakeR.setPower(1);
-                pidDriveCommand(-1, -1, 0, 0.00, 2);
-            }
-            if(skystoneLocation == 2) {
-                intakeL.setPower(-1);
-                intakeR.setPower(-1);
-                pidDriveCommand(0, 36, 0, 0.55, 4);
-                intakeL.setPower(0);
-                intakeR.setPower(0);
-                pidDriveCommand(0, 24, 0, 0.55, 2);
-                pidDriveCommand(-48, 24, 0, 0.55, 4);
-                intakeL.setPower(1);
-                intakeR.setPower(1);
-                pidDriveCommand(-1, -1, 0, 0.00, 2);
-            }
-            if(skystoneLocation == 3) {
-                intakeL.setPower(-1);
-                intakeR.setPower(-1);
-                pidDriveCommand(16, 36, 0, 0.55, 4);
-                intakeL.setPower(0);
-                intakeR.setPower(0);
-                pidDriveCommand(16, 24, 0, 0.55, 2);
-                pidDriveCommand(-48, 24, 0, 0.55, 4);
-                intakeL.setPower(1);
-                intakeR.setPower(1);
-                pidDriveCommand(-1, -1, 0, 0.00, 2);
-            }
             break;
+
+//            intakeL.setPower(1);
+//            intakeR.setPower(-1);
+//            pidDriveCommand(-1, -1, 0, 0.00, 0.5);
+//            intakeL.setPower(0);
+//            intakeR.setPower(0);
+
+//            if(skystoneLocation == 1) {
+//                intakeL.setPower(-1);
+//                intakeR.setPower(-1);
+//                pidDriveCommand(-16, 36, 0, 0.55, 4);
+//                intakeL.setPower(0);
+//                intakeR.setPower(0);
+//                pidDriveCommand(-16, 24, 0, 0.55, 2);
+//                pidDriveCommand(-48, 24, 0, 0.55, 4);
+//                intakeL.setPower(1);
+//                intakeR.setPower(1);
+//                pidDriveCommand(-1, -1, 0, 0.00, 2);
+//            }
+//            if(skystoneLocation == 2) {
+//                intakeL.setPower(-1);
+//                intakeR.setPower(-1);
+//                pidDriveCommand(0, 36, 0, 0.55, 4);
+//                intakeL.setPower(0);
+//                intakeR.setPower(0);
+//                pidDriveCommand(0, 24, 0, 0.55, 2);
+//                pidDriveCommand(-48, 24, 0, 0.55, 4);
+//                intakeL.setPower(1);
+//                intakeR.setPower(1);
+//                pidDriveCommand(-1, -1, 0, 0.00, 2);
+//            }
+//            if(skystoneLocation == 3) {
+//                intakeL.setPower(-1);
+//                intakeR.setPower(-1);
+//                pidDriveCommand(16, 36, 0, 0.55, 4);
+//                intakeL.setPower(0);
+//                intakeR.setPower(0);
+//                pidDriveCommand(16, 24, 0, 0.55, 2);
+//                pidDriveCommand(-48, 24, 0, 0.55, 4);
+//                intakeL.setPower(1);
+//                intakeR.setPower(1);
+//                pidDriveCommand(-1, -1, 0, 0.00, 2);
+//            }
+//            break;
         }
         intakeL.setPower(0);
         intakeR.setPower(0);
@@ -197,6 +203,7 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         double Kp = 0.06;  //[--]
         double Ki = 0.00005;  //[--]
         double Kd = 0.008*0;  //[--]
+        double Kturn = 0.5;  //Sensitivity for turning
         double strafeError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double driveError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double turnError = 1;  //[deg];  Initialize to 1 so it is larger than turnTol
@@ -219,7 +226,7 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         double turnCmd = 0;  //[%]; Turn command = 0 - 1.00
 
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < timeout){
+        while (opModeIsActive() && runtime.seconds() < timeout && moveComplete == false){
             //Get current positions
             absPosnX = startPosnX + positionUpdate.returnOdometryX();
             absPosnY = startPosnY + positionUpdate.returnOdometryY();
@@ -231,15 +238,15 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
             turnError = thetaTarget - absPosnTheta;
 
 
-            if (Math.abs(strafeError) < 1){
+            if (Math.abs(strafeError) < 1){  //Enable integral only when within 1 inch of target
             strafeIntegral = strafeIntegral + strafeError*0.02;
             } else strafeIntegral = 0;
 
-            if (Math.abs(driveError) < 1){
+            if (Math.abs(driveError) < 1){  //Enable integral only when within 1 inch of target
                 driveIntegral = driveIntegral + driveError*0.02;
             } else driveIntegral = 0;
 
-            if (Math.abs(turnError) < 1) {
+            if (Math.abs(turnError) < 10) {  //Enable integral only when within 10 degree of target
                 turnIntegral = turnIntegral + turnError*0.02;
             } else turnIntegral = 0;
 
@@ -254,7 +261,7 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
             //PID summation
             driveCmd = Kp*driveError + Ki*driveIntegral + Kd*driveDerivative;
             strafeCmd = Kp*strafeError + Ki*strafeIntegral + Kd*strafeDerivative;
-            turnCmd = -Kp*turnError - Ki*turnIntegral - Kd*turnDerivative;
+            turnCmd = Kturn*(-Kp*turnError - Ki*turnIntegral - Kd*turnDerivative);
 
             //Clip values within maximum specified power range
             driveCmd = Range.clip(driveCmd, -maxPower, maxPower);
@@ -266,6 +273,11 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
             motorFR.setPower(driveCmd - strafeCmd - turnCmd);
             motorRL.setPower(driveCmd - strafeCmd + turnCmd);
             motorRR.setPower(driveCmd + strafeCmd - turnCmd);
+
+
+            if (Math.abs(strafeError) < strafeDriveTol && Math.abs(driveError) < strafeDriveTol && Math.abs(turnError) < turnTol){
+            moveComplete = true;
+        }
 
             //Telemetry
             telemetry.addData("X Position [in]", absPosnX);

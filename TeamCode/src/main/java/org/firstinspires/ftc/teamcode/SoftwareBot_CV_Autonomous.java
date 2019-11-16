@@ -32,13 +32,14 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.skystone.modifiedGoldDetector;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.opencv.core.Rect;
 
 @Autonomous(name="CV Test", group="Codebusters")
-//@Disabled
+@Disabled
 public class SoftwareBot_CV_Autonomous extends OpMode
 {
     // Detector object

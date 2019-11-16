@@ -75,6 +75,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
     private double driver1SpeedKLast = driver1SpeedKTurbo;  //Initialize at turbo power
     private double driver1SpeedKTemp = driver1SpeedKTurbo;  //Initialize at turbo power
     private double driver1SpeedKFinal = driver1SpeedKTurbo;  //Initialize at turbo power
+    private double Kturn = 0.5;  //Sensitivity for turning
     private double motorFLpower1 = 0;
     private double motorFRpower1 = 0;
     private double motorRLpower1 = 0;
@@ -96,7 +97,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
     private double outtakeOpLast = outtakeOpStop;  //Initialize at stop
     private double outtakeOpTemp = outtakeOpStop;  //Initialize at stop
     private double outtakeOpFinal = outtakeOpStop;  //Initialize at stop
-       // Distance Sensor Declarations
+    //Distance sensor declarations
     private DistanceSensor sensorRange;
 
 
@@ -105,18 +106,15 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
      */
     @Override
     public void init() {
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
+        //Initialize motors
+        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorRL = hardwareMap.get(DcMotor.class, "motorRL");
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        //Set motor direction
         motorFL.setDirection(DcMotor.Direction.FORWARD);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorRL.setDirection(DcMotor.Direction.FORWARD);
@@ -124,13 +122,8 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         intakeR.setDirection(DcMotor.Direction.FORWARD);
         intakeL.setDirection(DcMotor.Direction.REVERSE);
 
-
-        // you can use this as a regular DistanceSensor.
+        //Initialize distance sensor
         sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
-
-        // you can also cast this to a Rev2mDistanceSensor if you want to use added
-        // methods associated with the Rev2mDistanceSensor class.
-        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
     }
 
     /*
@@ -157,12 +150,12 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
 
 
 //*******DRIVE OPERATION**************************************************************************//
-        // Left stick to go forward and strafe, and right stick to turn.
+        //Left stick to go forward and strafe, and right stick to turn.
         double drive1 = -gamepad1.left_stick_y;  //Driver 1 drive command
         double strafe1 = gamepad1.left_stick_x;  //Driver 1 strafe command
-        double turn1 = gamepad1.right_stick_x;  //Driver 1 turn command
+        double turn1 = Kturn*gamepad1.right_stick_x;  //Driver 1 turn command
 
-        // Toggle driver1 speed (turbo or standard) when pressing Start button
+        //Toggle driver1 speed (turbo or standard) when pressing Start button
         if (gamepad1.start && driver1SpeedKLast < driver1SpeedKTurbo) {
             driver1SpeedKTemp = driver1SpeedKTurbo;
         } else if (gamepad1.start && driver1SpeedKLast > driver1SpeedKStandard) {
@@ -173,19 +166,19 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         }
         driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
 
-        // Driver 1 motor power using mecanum equations
+        //Driver 1 motor power using mecanum equations
         motorFLpower1 = driver1SpeedKFinal*(drive1 + turn1 + strafe1);
         motorFRpower1 = driver1SpeedKFinal*(drive1 - turn1 - strafe1);
         motorRLpower1 = driver1SpeedKFinal*(drive1 + turn1 - strafe1);
         motorRRpower1 = driver1SpeedKFinal*(drive1 - turn1 + strafe1);
 
-        // Add up all motor power sources
+        //Add up all motor power sources
         motorFLpowerFinal = motorFLpower1;
         motorFRpowerFinal = motorFRpower1;
         motorRLpowerFinal = motorRLpower1;
         motorRRpowerFinal = motorRRpower1;
 
-        // Send calculated power to wheels using mecanum equations
+        //Send calculated power to wheels using mecanum equations
         motorFL.setPower(motorFLpowerFinal);
         motorFR.setPower(motorFRpowerFinal);
         motorRL.setPower(motorRLpowerFinal);
@@ -196,7 +189,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
 
 
 //*******INTAKE/OUTTAKE OPERATION*****************************************************************//
-        // Toggle Intake when pressing Left Bumper
+        //Toggle Intake when pressing Left Bumper
         if (gamepad2.left_bumper && intakeOpLast < intakeOpStart) {
             intakeOpTemp = intakeOpStart;
         } else if (gamepad2.left_bumper && intakeOpLast > intakeOpStop) {
@@ -219,7 +212,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
 
         intakeOpFinal = intakeOpTemp;  //intake Motor speed
 
-        // Toggle Outtake when pressing Right Bumper
+        //Toggle Outtake when pressing Right Bumper
         if (gamepad2.right_bumper && outtakeOpLast < outtakeOpStart) {
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
@@ -234,7 +227,6 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
 
         if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
             outtakeOpLast = outtakeOpTemp;
-
             //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;
@@ -242,20 +234,14 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         }
         outtakeOpFinal = outtakeOpTemp;  //outtake Motor speed
 
-        // Send calculated power to intake/outtake Motors
+        //Send calculated power to intake/outtake Motors
         intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
         intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
-
-
 //************************************************************************************************//
+
         telemetry.addData("deviceName",sensorRange.getDeviceName() );
         telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
-
-        // Rev2mDistanceSensor specific methods.
- //*******************************************************************************************************//
-
         telemetry.update();
-
     }
 
     /*
