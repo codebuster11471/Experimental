@@ -124,12 +124,12 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
-        motorRL.setDirection(DcMotor.Direction.REVERSE);
-        motorRR.setDirection(DcMotor.Direction.FORWARD);
-        intakeR.setDirection(DcMotor.Direction.REVERSE);
-        intakeL.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorRL.setDirection(DcMotor.Direction.FORWARD);
+        motorRR.setDirection(DcMotor.Direction.REVERSE);
+        intakeR.setDirection(DcMotor.Direction.FORWARD);
+        intakeL.setDirection(DcMotor.Direction.REVERSE);
 
         // Set up the parameters with which we will use our IMU.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
