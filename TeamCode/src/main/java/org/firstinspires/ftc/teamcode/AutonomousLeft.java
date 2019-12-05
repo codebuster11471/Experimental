@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Autonomous(name="Red Autonomous", group="Codebusters")
+@Autonomous(name="AutonomousLeft", group="Codebusters")
 //@Disabled
-public class RedAutonomous extends LinearOpMode {
+public class AutonomousLeft extends LinearOpMode {
 
     //Detector declaration
     private modifiedGoldDetector detector;
@@ -132,13 +132,12 @@ public class RedAutonomous extends LinearOpMode {
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            pidDriveCommand(0, 26, 0, 0.40, 5);
-            pidDriveCommand(-24, 26, 0, 0.40, 5);
-//            intakeL.setPower(0.5);
-//            intakeR.setPower(-0.5);
+            pidDriveCommand(-24, 0, 0, 0.30, 4);
+            intakeL.setPower(0.5);
+            intakeR.setPower(-0.5);
             pidDriveCommand(0, 0, 0, 0, 0.5);
-//            intakeL.setPower(0);
-//            intakeR.setPower(0);
+            intakeL.setPower(0);
+            intakeR.setPower(0);
             break;
 
 //            intakeL.setPower(1);

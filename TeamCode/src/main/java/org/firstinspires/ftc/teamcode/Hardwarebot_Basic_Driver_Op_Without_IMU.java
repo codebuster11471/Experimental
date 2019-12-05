@@ -119,8 +119,8 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorRL.setDirection(DcMotor.Direction.FORWARD);
         motorRR.setDirection(DcMotor.Direction.REVERSE);
-        intakeR.setDirection(DcMotor.Direction.FORWARD);
-        intakeL.setDirection(DcMotor.Direction.REVERSE);
+        intakeR.setDirection(DcMotor.Direction.REVERSE);
+        intakeL.setDirection(DcMotor.Direction.FORWARD);
 
         //Initialize distance sensor
         sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
@@ -203,7 +203,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
             outtakeOpLast = 0.00;
         }
         telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
-            if (sensorRange.getDistance (DistanceUnit.INCH) < 5) {
+            if (sensorRange.getDistance (DistanceUnit.INCH) < 6) {
             //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;

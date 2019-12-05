@@ -126,8 +126,8 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorRL.setDirection(DcMotor.Direction.FORWARD);
         motorRR.setDirection(DcMotor.Direction.REVERSE);
-        intakeR.setDirection(DcMotor.Direction.FORWARD);
-        intakeL.setDirection(DcMotor.Direction.REVERSE);
+        intakeR.setDirection(DcMotor.Direction.REVERSE);
+        intakeL.setDirection(DcMotor.Direction.FORWARD);
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -229,7 +229,7 @@ public class Hardwarebot_Basic_Driver_Op_With_IMU extends OpMode
             outtakeOpLast = 0.00;
         }
         telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
-            if (sensorRange.getDistance (DistanceUnit.INCH) < 5) {
+            if (sensorRange.getDistance (DistanceUnit.INCH) < 6) {
             //Turn off intake if it is already on
             intakeOpFinal = 0.00;
             intakeOpTemp = 0.00;
