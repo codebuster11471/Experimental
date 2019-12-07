@@ -41,7 +41,7 @@ import com.qualcomm.robotcore.util.Range;
 
 
 @Autonomous(name="Autonomous Test4", group="Codebusters")
-@Disabled
+//@Disabled
 public class Softwarebot_Test4_Autonomous extends LinearOpMode {
 
     //Detector declaration
