@@ -87,9 +87,9 @@ public class modifiedGoldDetector extends DogeCVDetector_Modified {
         double sector3GMeanSrc = sector3Mean.get(1, 0)[0];
         double sector3BMeanSrc = sector3Mean.get(2, 0)[0];
         //Release sector crops for memory
-//        sector1crop.release();
-//        sector2crop.release();
-//        sector3crop.release();
+        sector1crop.release();
+        sector2crop.release();
+        sector3crop.release();
 
         //define skystone as the lowest value of red
         if (sector1RMeanSrc < sector3RMeanSrc && sector1RMeanSrc < sector2RMeanSrc) {

@@ -116,8 +116,6 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
         telemetry.update();
 
 
-        //TODO Pass skystone location to storage
-
         //Wait for the game to start (driver presses PLAY)
         waitForStart();
 

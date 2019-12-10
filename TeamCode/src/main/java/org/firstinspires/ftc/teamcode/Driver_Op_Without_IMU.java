@@ -61,9 +61,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Hardwarebot without IMU", group="Iterative Opmode")
+@TeleOp(name="Driver_Op_Without_IMU", group="Iterative Opmode")
 //@Disabled
-public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
+public class Driver_Op_Without_IMU extends OpMode
 {
     //Drive system declarations
     private ElapsedTime runtime = new ElapsedTime();
@@ -131,7 +131,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         //Initialize distance sensor
         sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
 
-        //Initialize Fangs
+        //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
     }

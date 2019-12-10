@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Autonomous(name="AutonomousRight", group="Codebusters")
+@Autonomous(name="ParkRight", group="Codebusters")
 //@Disabled
-public class AutonomousRight extends LinearOpMode {
+public class ParkRight extends LinearOpMode {
 
     //Detector declaration
     private modifiedGoldDetector detector;
@@ -131,65 +131,14 @@ public class AutonomousRight extends LinearOpMode {
 
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            pidDriveCommand(24, 0, 0, 0.30, 4);
-            intakeL.setPower(0.5);
-            intakeR.setPower(-0.5);
-            pidDriveCommand(0, 0, 0, 0, 0.5);
-            intakeL.setPower(0);
-            intakeR.setPower(0);
+            pidDriveCommand(0, 24, 0, 0.25, 5);
             break;
-
-//            intakeL.setPower(1);
-//            intakeR.setPower(-1);
-//            pidDriveCommand(-1, -1, 0, 0.00, 0.5);
-//            intakeL.setPower(0);
-//            intakeR.setPower(0);
-
-//            if(skystoneLocation == 1) {
-//                intakeL.setPower(-1);
-//                intakeR.setPower(-1);
-//                pidDriveCommand(-16, 36, 0, 0.55, 4);
-//                intakeL.setPower(0);
-//                intakeR.setPower(0);
-//                pidDriveCommand(-16, 24, 0, 0.55, 2);
-//                pidDriveCommand(-48, 24, 0, 0.55, 4);
-//                intakeL.setPower(1);
-//                intakeR.setPower(1);
-//                pidDriveCommand(-1, -1, 0, 0.00, 2);
-//            }
-//            if(skystoneLocation == 2) {
-//                intakeL.setPower(-1);
-//                intakeR.setPower(-1);
-//                pidDriveCommand(0, 36, 0, 0.55, 4);
-//                intakeL.setPower(0);
-//                intakeR.setPower(0);
-//                pidDriveCommand(0, 24, 0, 0.55, 2);
-//                pidDriveCommand(-48, 24, 0, 0.55, 4);
-//                intakeL.setPower(1);
-//                intakeR.setPower(1);
-//                pidDriveCommand(-1, -1, 0, 0.00, 2);
-//            }
-//            if(skystoneLocation == 3) {
-//                intakeL.setPower(-1);
-//                intakeR.setPower(-1);
-//                pidDriveCommand(16, 36, 0, 0.55, 4);
-//                intakeL.setPower(0);
-//                intakeR.setPower(0);
-//                pidDriveCommand(16, 24, 0, 0.55, 2);
-//                pidDriveCommand(-48, 24, 0, 0.55, 4);
-//                intakeL.setPower(1);
-//                intakeR.setPower(1);
-//                pidDriveCommand(-1, -1, 0, 0.00, 2);
-//            }
-//            break;
         }
         intakeL.setPower(0);
         intakeR.setPower(0);
         //Stop the odometry processing thread
 //        odometryThread.interrupt();
     }
-
 
 
     public void pidDriveCommand(double xTarget, double yTarget, double thetaTarget, double maxPower, double timeout){
@@ -202,7 +151,6 @@ public class AutonomousRight extends LinearOpMode {
         double Kp = 0.06;  //[--]
         double Ki = 0.00005;  //[--]
         double Kd = 0.008*0;  //[--]
-        double Kturn = 0.5;  //Sensitivity for turning
         double strafeError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double driveError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double turnError = 1;  //[deg];  Initialize to 1 so it is larger than turnTol
@@ -216,7 +164,7 @@ public class AutonomousRight extends LinearOpMode {
         double prevDriveError = 0;
         double prevTurnError = 0;
         double strafeDriveTol = 0.1;  //[inch]; Allowable strafe/drive error before exiting PID loop
-        double turnTol = 0.1;  //[deg]; Allowable turn error before exiting PID loo
+        double turnTol = 0.5;  //[deg]; Allowable turn error before exiting PID loop
         boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
 
         //Output declarations
@@ -232,20 +180,19 @@ public class AutonomousRight extends LinearOpMode {
             absPosnTheta = startPosnTheta + positionUpdate.returnOdometryTheta();
 
             //Calculate error
-            strafeError = xTarget - absPosnX;
-            driveError = yTarget - absPosnY;
+            strafeError = yTarget - absPosnY;
+            driveError = xTarget - absPosnX;
             turnError = thetaTarget - absPosnTheta;
 
-
-            if (Math.abs(strafeError) < 1){  //Enable integral only when within 1 inch of target
-            strafeIntegral = strafeIntegral + strafeError*0.02;
+            if (Math.abs(strafeError) < 1){
+                strafeIntegral = strafeIntegral + strafeError*0.02;
             } else strafeIntegral = 0;
 
-            if (Math.abs(driveError) < 1){  //Enable integral only when within 1 inch of target
+            if (Math.abs(driveError) < 1){
                 driveIntegral = driveIntegral + driveError*0.02;
             } else driveIntegral = 0;
 
-            if (Math.abs(turnError) < 10) {  //Enable integral only when within 10 degree of target
+            if (Math.abs(turnError) < 1) {
                 turnIntegral = turnIntegral + turnError*0.02;
             } else turnIntegral = 0;
 
@@ -257,10 +204,14 @@ public class AutonomousRight extends LinearOpMode {
             prevDriveError = driveError;
             prevTurnError = turnError;
 
+            if(Math.abs(strafeError) < strafeDriveTol && Math.abs(driveError) < strafeDriveTol && Math.abs(turnError) < turnTol){
+                moveComplete = true;
+            }  //If robot is within specified drive/strafe/turn tolerances, exit the loop early, otherwise it will exit after a timeout
+
             //PID summation
             driveCmd = Kp*driveError + Ki*driveIntegral + Kd*driveDerivative;
             strafeCmd = Kp*strafeError + Ki*strafeIntegral + Kd*strafeDerivative;
-            turnCmd = Kturn*(-Kp*turnError - Ki*turnIntegral - Kd*turnDerivative);
+            turnCmd = -Kp*turnError - Ki*turnIntegral - Kd*turnDerivative;
 
             //Clip values within maximum specified power range
             driveCmd = Range.clip(driveCmd, -maxPower, maxPower);
@@ -272,11 +223,6 @@ public class AutonomousRight extends LinearOpMode {
             motorFR.setPower(driveCmd - strafeCmd - turnCmd);
             motorRL.setPower(driveCmd - strafeCmd + turnCmd);
             motorRR.setPower(driveCmd + strafeCmd - turnCmd);
-
-
-            if (Math.abs(strafeError) < strafeDriveTol && Math.abs(driveError) < strafeDriveTol && Math.abs(turnError) < turnTol){
-            moveComplete = true;
-        }
 
             //Telemetry
             telemetry.addData("X Position [in]", absPosnX);
