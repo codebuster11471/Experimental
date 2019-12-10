@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -72,10 +73,10 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
     private DcMotor motorRR = null;
     private double driver1SpeedKTurbo = 1.0;  //1.0 = 100% power
     private double driver1SpeedKStandard = 0.50;  //0.XX = XX% power
-    private double driver1SpeedKLast = driver1SpeedKTurbo;  //Initialize at turbo power
-    private double driver1SpeedKTemp = driver1SpeedKTurbo;  //Initialize at turbo power
-    private double driver1SpeedKFinal = driver1SpeedKTurbo;  //Initialize at turbo power
-    private double Kturn = 0.5;  //Sensitivity for turning
+    private double driver1SpeedKLast = driver1SpeedKStandard;  //Initialize at standard speed
+    private double driver1SpeedKTemp = driver1SpeedKStandard;  //Initialize at standard speed
+    private double driver1SpeedKFinal = driver1SpeedKStandard;  //Initialize at standard speed
+    private double Kturn = 0.75;  //Sensitivity for turning
     private double motorFLpower1 = 0;
     private double motorFRpower1 = 0;
     private double motorRLpower1 = 0;
@@ -88,17 +89,22 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
     private double intakeOpStop = 0.00;  //0%
-    private double intakeOpStart = 1.0;  //100%
+    private double intakeOpStart = 1.00;  //100%
     private double intakeOpLast = intakeOpStop;  //Initialize at stop
     private double intakeOpTemp = intakeOpStop;  //Initialize at stop
     private double intakeOpFinal = intakeOpStop;  //Initialize at stop
     private double outtakeOpStop = 0.00;  //0%
-    private double outtakeOpStart = 1.0;  //100%
+    private double outtakeOpStart = 0.60;  //65%
     private double outtakeOpLast = outtakeOpStop;  //Initialize at stop
     private double outtakeOpTemp = outtakeOpStop;  //Initialize at stop
     private double outtakeOpFinal = outtakeOpStop;  //Initialize at stop
     //Distance sensor declarations
     private DistanceSensor sensorRange;
+    //Fang Declarations
+    Servo servoL;  //Left fang servo
+    Servo   servoR;  //Right fang servo
+    boolean fangsClosed = false;  //Fang position tracker, FALSE = open, TRUE = closed
+
 
 
     /*
@@ -124,6 +130,10 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
 
         //Initialize distance sensor
         sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
+
+        //Initialize Fangs
+        servoL = hardwareMap.get(Servo.class, "servoL");
+        servoR = hardwareMap.get(Servo.class, "servoR");
     }
 
     /*
@@ -147,6 +157,20 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
      */
     @Override
     public void loop() {
+//*******FANG OPERATION***************************************************************************//
+        //Toggle FANGS Open When pressing Left Bumper
+        if (gamepad1.left_bumper){
+            servoL.setPosition(0);
+            servoR.setPosition(0);
+            fangsClosed = false;  //Keep track of fang position, as it can override drive speed
+        }
+        // Toggle Fangs Closed When Pressing Right Bumper
+        if (gamepad1.right_bumper){
+            servoL.setPosition(0.5);
+            servoR.setPosition(0.5);
+            fangsClosed = true;  //Keep track of fang position, as it can override drive speed
+        }
+//************************************************************************************************//
 
 
 //*******DRIVE OPERATION**************************************************************************//
@@ -164,8 +188,12 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         if (!gamepad1.start && driver1SpeedKLast != driver1SpeedKTemp) {  //This is to prevent toggle bounce when holding the Start button; e.g. toggle on release
             driver1SpeedKLast = driver1SpeedKTemp;
         }
-        driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
-
+        if (fangsClosed == true ) {
+            driver1SpeedKFinal = 0.20 ;  //Override to Very Slow if fangs are closed
+        }
+        else {
+            driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
+        }
         //Driver 1 motor power using mecanum equations
         motorFLpower1 = driver1SpeedKFinal*(drive1 + turn1 + strafe1);
         motorFRpower1 = driver1SpeedKFinal*(drive1 - turn1 - strafe1);
@@ -202,7 +230,7 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
         }
-        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+        telemetry.addData("Range =", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
 //            if (sensorRange.getDistance (DistanceUnit.INCH) < 6) {
             //Turn off intake if it is already on
 //            intakeOpFinal = 0.00;
@@ -217,12 +245,12 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;
-        } if (sensorRange.getDistance (DistanceUnit.INCH) > 11.5) {
+        } if (sensorRange.getDistance (DistanceUnit.INCH) > 10.5) {
             //Turn off outtake if it is already on
             outtakeOpFinal = 0.00;
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
-            telemetry.addLine("block ejected outtake off");
+            telemetry.addLine("Block ejected outtake off");
         }
 
         if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
@@ -239,8 +267,8 @@ public class Hardwarebot_Basic_Driver_Op_Without_IMU extends OpMode
         intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
 //************************************************************************************************//
 
-        telemetry.addData("deviceName",sensorRange.getDeviceName() );
-        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+//        telemetry.addData("deviceName",sensorRange.getDeviceName() );
+//        telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
         telemetry.update();
     }
 

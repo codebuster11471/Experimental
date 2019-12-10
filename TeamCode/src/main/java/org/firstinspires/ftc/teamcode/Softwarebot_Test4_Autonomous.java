@@ -82,7 +82,7 @@ public class Softwarebot_Test4_Autonomous extends LinearOpMode {
     public void runOpMode() {
         //Intialize the computer vision detector
         detector = new modifiedGoldDetector(); //Create detector
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.FRONT); //Initialize it with the app context and camera
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); //Initialize it with the app context and camera
         detector.enable(); //Start the detector
 
         //Initialize the drivetrain
