@@ -277,6 +277,11 @@ public class Driver_Op_Without_IMU extends OpMode
      */
     @Override
     public void stop() {
+        //Shutdown on STOP
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorRL.setPower(0);
+        motorRR.setPower(0);
         telemetry.addLine("kthxbye");
     }
 }

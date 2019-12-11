@@ -46,9 +46,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name="OneSkystoneSeek_ParkForwardLeft1", group="Codebusters")
+@Autonomous(name="C_OneStone_DropRightBridge", group="Codebusters")
 //@Disabled
-public class OneSkystoneSeek_ParkForwardLeft extends LinearOpMode {
+public class C_OneStone_DropRightBridge extends LinearOpMode {
 
     //Detector declaration
     private modifiedGoldDetector detector;
@@ -155,46 +155,50 @@ public class OneSkystoneSeek_ParkForwardLeft extends LinearOpMode {
 
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-//            intakeOperation(1);
-
-//            if(skystoneLocation == 1) {
-//            pidDriveCommand(6, 0, 0, 0.25, 4);
-//            pidDriveCommand(18, 0, 0, 0.25, 4);
-//            pidDriveCommand(9, 0, 0, 0.25, 4);
-//            pidDriveCommand(9, 18, 0, 0.25, 4);
-//            pidDriveCommand(9, -18, 0, 0.25, 4);
-            pidDriveCommand(9, 0, 0, 0.35, 6);
-            pidDriveCommand(9, 0, -45, 0.35, 6);
-//            pidTurnCommand(-45, 0.25, 4);
-            pidDriveCommand(18, 0, -45, 0.35, 6);
-            pidDriveCommand(9, 0, -45, 0.35, 6);
-
-//            pidDriveCommand(0, 0, -90, 0.25, 4);
-//            pidDriveCommand(0, 0, -270, 0.20, 4);
-
-//                pidDriveCommand(12, -12, 0, 0.10, 4);
-//                pidDriveCommand(6, -12, 0, 0.10, 4);
-//                pidDriveCommand(6, -24, 0, 0.10, 4);
-//                pidDriveCommand(-1, -1, 0, 0.40, 4);            }
-//            if(skystoneLocation == 2) {
-//                pidDriveCommand(0, 36, 0, 0.55, 4);
-//                pidDriveCommand(0, 24, 0, 0.55, 2);
-//                pidDriveCommand(-48, 24, 0, 0.55, 4);
-//                pidDriveCommand(-1, -1, 0, 0.00, 2);
-//            }
-//            if(skystoneLocation == 3) {
-//                pidDriveCommand(16, 36, 0, 0.55, 4);
-//                pidDriveCommand(16, 24, 0, 0.55, 2);
-//                pidDriveCommand(-48, 24, 0, 0.55, 4);
-//                pidDriveCommand(-1, -1, 0, 0.00, 2);
-//            }
+            if(skystoneLocation == 1) {
+                pidDriveCommand(26, -10, 0.25, 3);
+                intakeOperation(1);
+                pidDriveCommand(38, -10, 0.10, 3);
+                pidDriveCommand(26, -10, 0.25, 2);
+                pidDriveCommand(26, 58, 0.25, 6);
+                intakeOperation(-1);
+                pidDriveCommand(-1, -1,  0, 1);
+                intakeOperation(0);
+                pidDriveCommand(26, 36, 0.25, 3);
+            }
+            if(skystoneLocation == 2) {
+                pidDriveCommand(26, 0, 0.25, 3);
+                intakeOperation(1);
+                pidDriveCommand(38, 0, 0.10, 3);
+                pidDriveCommand(26, 0, 0.25, 2);
+                pidDriveCommand(26, 58, 0.25, 6);
+                intakeOperation(-1);
+                pidDriveCommand(-1, -1,  0, 1);
+                intakeOperation(0);
+                pidDriveCommand(26, 36, 0.25, 3);
+            }
+            if(skystoneLocation == 3) {
+                pidDriveCommand(26, 10, 0.25, 3);
+                intakeOperation(1);
+                pidDriveCommand(38, 10, 0.10, 3);
+                pidDriveCommand(26, 10, 0.25, 2);
+                pidDriveCommand(26, 58, 0.25, 6);
+                intakeOperation(-1);
+                pidDriveCommand(-1, -1,  0, 1);
+                intakeOperation(0);
+                pidDriveCommand(26, 36, 0.25, 3);
+            }
+            pidTurnCommand(0, 0.25, 2);
             break;
         }
+        //Shutdown on STOP
         intakeOperation(0);
-sleep(10000);
-
-        //Stop the odometry processing thread
-//        odometryThread.interrupt();
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorRL.setPower(0);
+        motorRR.setPower(0);
+        imu.close();
+        if(detector != null) detector.disable();
     }
 
 
@@ -214,7 +218,7 @@ sleep(10000);
     }
 
 
-    public void pidDriveCommand(double xTarget, double yTarget, double thetaTarget, double maxPower, double timeout){
+    public void pidDriveCommand(double xTarget, double yTarget, double maxPower, double timeout){
         //Start the odometry processing thread
         odometryPositionUpdate positionUpdate = new odometryPositionUpdate(motorFL, motorFR, motorRL, motorRR, inchPerCount, trackWidth, wheelBase, 75);
         Thread odometryThread = new Thread(positionUpdate);
@@ -226,54 +230,34 @@ sleep(10000);
         double Kd = 0.0008;  //[--]
         double xError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double yError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
-        double thetaError = 1;  //[deg];  Initialize to 1 so it is larger than turnTol
         double xIntegral = 0;  //[in]
         double yIntegral = 0;  //[in]
-        double thetaIntegral = 0;  //[deg]
         double xDerivative = 0;  //[in]
         double yDerivative = 0;  //[in]
-        double thetaDerivative = 0;  //[deg]
         double prevYError = 0;
         double prevXError = 0;
-        double prevThetaError = 0;
         double xyTol = 0.1;  //[inch]; Allowable strafe/drive error before exiting PID loop
-        double thetaTol = 0.5;  //[deg]; Allowable turn error before exiting PID loop
         double driveCmdtemp = 0;  //Storage variable
         double strafeCmdtemp = 0;  //Storage variable
         boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
 
         //Odometry declaration
-        double odometryX = 0, odometryY = 0, odometryTheta = 0;  //[inch];  Initialize at 0
-        double odometryXtemp =0, odometryYtemp = 0;  //[inch];  Storage variables
+        double odometryX = 0, odometryY = 0;  //[inch];  Initialize at 0
 
         //Output declarations
         double driveCmd = 0;  //[%]; Drive command = 0 - 1.00
         double strafeCmd = 0;  //[%]; Strafe command = 0 - 1.00
-        double turnCmd = 0;  //[%]; Turn command = 0 - 1.00
 
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() < timeout && moveComplete == false) {
-//            //Get current positions, apply rotation matrix correction
-//            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//            absPosnTheta = angles.firstAngle;
-//            absPosnTheta = thetaTarget;
-
-            //Angular correction, see Wikipedia topic "Rotation Matrix"
-//            odometryXtemp = positionUpdate.returnOdometryX()*Math.cos(Math.toRadians(absPosnTheta)) - positionUpdate.returnOdometryY()*Math.sin(Math.toRadians(absPosnTheta));
-//            odometryYtemp = positionUpdate.returnOdometryX()*Math.sin(Math.toRadians(absPosnTheta)) + positionUpdate.returnOdometryY()*Math.cos(Math.toRadians(absPosnTheta));
-//            odometryX = odometryXtemp;
-//            odometryY = odometryYtemp;
+            //Get current positions
             odometryX = positionUpdate.returnOdometryX();
             odometryY = positionUpdate.returnOdometryY();
-            odometryTheta = positionUpdate.returnOdometryTheta();
             absPosnX = odometryX;
             absPosnY = odometryY;
-            absPosnTheta = odometryTheta;
 
             xError = xTarget - absPosnX;
             yError = yTarget - absPosnY;
-            thetaError = thetaTarget - absPosnTheta;
-//            thetaError = 0;
 
             if (Math.abs(xError) < 1) {  //Only enable integral when error is less than 1 inch
                 xIntegral = xIntegral + xError*0.02;
@@ -281,32 +265,24 @@ sleep(10000);
             if (Math.abs(yError) < 1) {  //Only enable integral when error is less than 1 inch
                 yIntegral = yIntegral + yError*0.02;
             } else yIntegral = 0;
-            if (Math.abs(thetaError) < 1) {  //Only enable integral when error is less than 1 inch
-                thetaIntegral = thetaIntegral + thetaError*0.02;
-            } else thetaIntegral = 0;
 
             xDerivative = (xError - prevXError)/0.02;
             yDerivative = (yError - prevYError)/0.02;
-            thetaDerivative = (thetaError - prevThetaError)/0.02;
 
             prevXError = xError;
             prevYError = yError;
-            prevThetaError = thetaError;
 
-            if(Math.abs(yError) < xyTol && Math.abs(xError) < xyTol && Math.abs(thetaError) < thetaTol) {
+            if(Math.abs(yError) < xyTol && Math.abs(xError) < xyTol) {
                 moveComplete = true;
             }  //If robot is within specified drive/strafe/turn tolerances, exit the loop early, otherwise it will exit after a timeout
 
             //PID summation
             driveCmd = Kp*xError + Ki*xIntegral + Kd*xDerivative;
             strafeCmd = Kp*yError + Ki*yIntegral + Kd*yDerivative;
-            turnCmd = -Kp*thetaError - Ki*thetaIntegral - Kd*thetaDerivative;
 
             //Clip values within maximum specified power range
             driveCmd = Range.clip(driveCmd, -maxPower, maxPower);
             strafeCmd = Range.clip(strafeCmd, -maxPower, maxPower);
-            turnCmd = Range.clip(turnCmd, -maxPower, maxPower);
-//            turnCmd = 0;
 
             //Angular correction, see Wikipedia topic "Rotation Matrix"
             driveCmdtemp = driveCmd*Math.cos(Math.toRadians(absPosnTheta)) - strafeCmd*Math.sin(Math.toRadians(absPosnTheta));
@@ -315,10 +291,10 @@ sleep(10000);
             strafeCmd = strafeCmdtemp;
 
             //Send calculated power to wheels using mecanum equations
-            motorFL.setPower(driveCmd + strafeCmd + turnCmd);
-            motorFR.setPower(driveCmd - strafeCmd - turnCmd);
-            motorRL.setPower(driveCmd - strafeCmd + turnCmd);
-            motorRR.setPower(driveCmd + strafeCmd - turnCmd);
+            motorFL.setPower(driveCmd + strafeCmd);
+            motorFR.setPower(driveCmd - strafeCmd);
+            motorRL.setPower(driveCmd - strafeCmd);
+            motorRR.setPower(driveCmd + strafeCmd);
 
             //Telemetry
             telemetry.addData("X Position [in]", absPosnX);
@@ -326,7 +302,6 @@ sleep(10000);
             telemetry.addData("Orientation [deg]", absPosnTheta);
             telemetry.addData("Drive", driveCmd);
             telemetry.addData("Strafe", strafeCmd);
-            telemetry.addData("Turn", turnCmd);
             telemetry.update();
         }
         //Stop motors when complete
@@ -337,16 +312,15 @@ sleep(10000);
     }
 
     public void pidTurnCommand(double thetaTarget, double maxPower, double timeout){
-
         //PID controller declarations
-        double Kp = 0.06;  //[--]
-        double Ki = 0.00005;  //[--]
-        double Kd = 0.008*0;  //[--]
+        double Kp = 0.08;  //[--]
+        double Ki = 0.000005;  //[--]
+        double Kd = 0.0008;  //[--]
         double thetaError = 1;  //[deg];  Initialize to 1 so it is larger than turnTol
         double thetaIntegral = 0;  //[deg]
         double thetaDerivative = 0;  //[deg]
         double prevThetaError = 0;
-        double thetaTol = 0.5;  //[deg]; Allowable turn error before exiting PID loop
+        double thetaTol = 0.1;  //[deg]; Allowable turn error before exiting PID loop
         boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
 
         //Output declarations
@@ -357,10 +331,24 @@ sleep(10000);
             //Get current positions
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             absPosnTheta = angles.firstAngle;
+            if (thetaTarget >= 0) {  //This is needed since it will otherwise behave oddly near +/- 180deg
+                if (absPosnTheta < 0) {
+                    thetaError = -(thetaTarget - Math.abs(absPosnTheta));
+                }
+                else if (absPosnTheta >= 0) {
+                    thetaError = thetaTarget - absPosnTheta;
+                }
+            }
+            else if (thetaTarget < 0) {  //This is needed since it will otherwise behave oddly near +/- 180deg
+                if (absPosnTheta <= 0) {
+                    thetaError = thetaTarget - absPosnTheta;
+                }
+                else if (absPosnTheta > 0) {
+                    thetaError = Math.abs(thetaTarget) - absPosnTheta;
+                }
+            }
 
-            thetaError = thetaTarget - absPosnTheta;
-
-                     if (Math.abs(thetaError) < 1) {  //Only enable integral when error is less than 1 inch
+            if (Math.abs(thetaError) < 5) {  //Only enable integral when error is less than 5 degrees
                 thetaIntegral = thetaIntegral + thetaError*0.02;
             } else thetaIntegral = 0;
 
@@ -377,7 +365,6 @@ sleep(10000);
 
             //Clip values within maximum specified power range
             turnCmd = Range.clip(turnCmd, -maxPower, maxPower);
-
 
             //Send calculated power to wheels using mecanum equations
             motorFL.setPower(turnCmd);
@@ -396,5 +383,4 @@ sleep(10000);
         motorRL.setPower(0);
         motorRR.setPower(0);
     }
-
 }

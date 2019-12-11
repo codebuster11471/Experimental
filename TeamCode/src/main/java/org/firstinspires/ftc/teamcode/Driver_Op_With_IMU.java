@@ -172,6 +172,10 @@ public class Driver_Op_With_IMU extends OpMode
 //*******POLL IMU FOR DATA************************************************************************//
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("firstAngle",  angles.firstAngle);
+
+        if (gamepad1.a && gamepad1.x && gamepad1.y){  //Store current heading to offset and initial error
+            headingOffset = angles.firstAngle;
+        }
 //************************************************************************************************//
 
 //*******FANG OPERATION***************************************************************************//
@@ -183,8 +187,8 @@ public class Driver_Op_With_IMU extends OpMode
         }
         // Toggle Fangs Closed When Pressing Right Bumper
         if (gamepad1.right_bumper){
-            servoL.setPosition(0.5);
-            servoR.setPosition(0.5);
+            servoL.setPosition(0.33);
+            servoR.setPosition(0.33);
             fangsClosed = true;  //Keep track of fang position, as it can override drive speed
         }
 //************************************************************************************************//
@@ -206,15 +210,15 @@ public class Driver_Op_With_IMU extends OpMode
             driver1SpeedKLast = driver1SpeedKTemp;
         }
         if (fangsClosed == true ) {
-            driver1SpeedKFinal = 0.20 ;  //Override to Very Slow if fangs are closed
+            driver1SpeedKFinal = 0.15 ;  //Override to Very Slow if fangs are closed
         }
         else {
             driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
         }
 
         //IMU correction, see Wikipedia topic "Rotation Matrix"
-        drive1temp = drive1*Math.cos(Math.toRadians(angles.firstAngle)) - strafe1*Math.sin(Math.toRadians(angles.firstAngle));
-        strafe1temp = drive1*Math.sin(Math.toRadians(angles.firstAngle)) + strafe1*Math.cos(Math.toRadians(angles.firstAngle));
+        drive1temp = drive1*Math.cos(Math.toRadians(angles.firstAngle-headingOffset)) - strafe1*Math.sin(Math.toRadians(angles.firstAngle-headingOffset));
+        strafe1temp = drive1*Math.sin(Math.toRadians(angles.firstAngle-headingOffset)) + strafe1*Math.cos(Math.toRadians(angles.firstAngle-headingOffset));
         drive1 = drive1temp;
         strafe1 = strafe1temp;
 
@@ -302,6 +306,12 @@ public class Driver_Op_With_IMU extends OpMode
      */
     @Override
     public void stop() {
+        //Shutdown on STOP
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorRL.setPower(0);
+        motorRR.setPower(0);
+        imu.close();
         telemetry.addLine("kthxbye");
     }
 }

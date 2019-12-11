@@ -149,18 +149,26 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
 
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            pidDriveCommand(-32, 32, 0, 0.2, 4);
-            pidDriveCommand(-38, 32, 0, 0.15, 1.5);
+            pidDriveCommand(-32, 32, 0.2, 4);
+            pidTurnCommand(0, 0.25, 2);
+            pidDriveCommand(-38, 32, 0.15, 1.5);
             foundationFangs(1);
-            pidDriveCommand(-1, -1, -1, 0, 0.5);
-            pidDriveCommand(-4, 32, 0, 0.2, 8);
+            pidDriveCommand(-1, -1,  0, 0.5);
+            pidDriveCommand(-4, 32, 0.2, 8);
             foundationFangs(0);
-            pidDriveCommand(-1, -1, -1, 0, 0.5);
-            pidDriveCommand(-6, 32, 0, 0.15, 2);
-            pidDriveCommand(-6, -25, 0, 0.25, 6);
+            pidTurnCommand(0, 0.25, 1);
+            pidDriveCommand(-6, 32, 0.15, 2);
+            pidDriveCommand(-6, -25, 0.25, 6);
             pidTurnCommand(180, 0.25, 5);
             break;
         }
+        //Shutdown on STOP
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorRL.setPower(0);
+        motorRR.setPower(0);
+        imu.close();
+        if(detector != null) detector.disable();
     }
 
 
@@ -176,7 +184,7 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
     }
 
 
-    public void pidDriveCommand(double xTarget, double yTarget, double thetaTarget, double maxPower, double timeout){  //Function for drive/strafe, and to maintain heading
+    public void pidDriveCommand(double xTarget, double yTarget, double maxPower, double timeout){
         //Start the odometry processing thread
         odometryPositionUpdate positionUpdate = new odometryPositionUpdate(motorFL, motorFR, motorRL, motorRR, inchPerCount, trackWidth, wheelBase, 75);
         Thread odometryThread = new Thread(positionUpdate);
@@ -188,42 +196,34 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
         double Kd = 0.0008;  //[--]
         double xError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double yError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
-        double thetaError = 1;  //[deg];  Initialize to 1 so it is larger than turnTol
         double xIntegral = 0;  //[in]
         double yIntegral = 0;  //[in]
-        double thetaIntegral = 0;  //[deg]
         double xDerivative = 0;  //[in]
         double yDerivative = 0;  //[in]
-        double thetaDerivative = 0;  //[deg]
         double prevYError = 0;
         double prevXError = 0;
-        double prevThetaError = 0;
         double xyTol = 0.1;  //[inch]; Allowable strafe/drive error before exiting PID loop
-        double thetaTol = 0.5;  //[deg]; Allowable turn error before exiting PID loop
         double driveCmdtemp = 0;  //Storage variable
         double strafeCmdtemp = 0;  //Storage variable
         boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
 
         //Odometry declaration
-        double odometryX = 0, odometryY = 0, odometryTheta = 0;  //[inch];  Initialize at 0
-        double odometryXtemp =0, odometryYtemp = 0;  //[inch];  Storage variables
+        double odometryX = 0, odometryY = 0;  //[inch];  Initialize at 0
 
         //Output declarations
         double driveCmd = 0;  //[%]; Drive command = 0 - 1.00
         double strafeCmd = 0;  //[%]; Strafe command = 0 - 1.00
-        double turnCmd = 0;  //[%]; Turn command = 0 - 1.00
 
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() < timeout && moveComplete == false) {
-            //Get current positions, apply rotation matrix correction
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);  //Use IMU for angular heading
-            absPosnX = positionUpdate.returnOdometryX();
-            absPosnY = positionUpdate.returnOdometryY();
-            absPosnTheta = angles.firstAngle;
+            //Get current positions
+            odometryX = positionUpdate.returnOdometryX();
+            odometryY = positionUpdate.returnOdometryY();
+            absPosnX = odometryX;
+            absPosnY = odometryY;
 
             xError = xTarget - absPosnX;
             yError = yTarget - absPosnY;
-            thetaError = thetaTarget - absPosnTheta;  //thetaError only used to maintain heading, not for making actual turns
 
             if (Math.abs(xError) < 1) {  //Only enable integral when error is less than 1 inch
                 xIntegral = xIntegral + xError*0.02;
@@ -231,31 +231,24 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
             if (Math.abs(yError) < 1) {  //Only enable integral when error is less than 1 inch
                 yIntegral = yIntegral + yError*0.02;
             } else yIntegral = 0;
-            if (Math.abs(thetaError) < 1) {  //Only enable integral when error is less than 1 inch
-                thetaIntegral = thetaIntegral + thetaError*0.02;
-            } else thetaIntegral = 0;
 
             xDerivative = (xError - prevXError)/0.02;
             yDerivative = (yError - prevYError)/0.02;
-            thetaDerivative = (thetaError - prevThetaError)/0.02;
 
             prevXError = xError;
             prevYError = yError;
-            prevThetaError = thetaError;
 
-            if(Math.abs(yError) < xyTol && Math.abs(xError) < xyTol && Math.abs(thetaError) < thetaTol) {
+            if(Math.abs(yError) < xyTol && Math.abs(xError) < xyTol) {
                 moveComplete = true;
             }  //If robot is within specified drive/strafe/turn tolerances, exit the loop early, otherwise it will exit after a timeout
 
             //PID summation
             driveCmd = Kp*xError + Ki*xIntegral + Kd*xDerivative;
             strafeCmd = Kp*yError + Ki*yIntegral + Kd*yDerivative;
-            turnCmd = 0.5*(-Kp*thetaError - Ki*thetaIntegral - Kd*thetaDerivative);
 
             //Clip values within maximum specified power range
             driveCmd = Range.clip(driveCmd, -maxPower, maxPower);
             strafeCmd = Range.clip(strafeCmd, -maxPower, maxPower);
-            turnCmd = Range.clip(turnCmd, -maxPower, maxPower);
 
             //Angular correction, see Wikipedia topic "Rotation Matrix"
             driveCmdtemp = driveCmd*Math.cos(Math.toRadians(absPosnTheta)) - strafeCmd*Math.sin(Math.toRadians(absPosnTheta));
@@ -264,10 +257,10 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
             strafeCmd = strafeCmdtemp;
 
             //Send calculated power to wheels using mecanum equations
-            motorFL.setPower(driveCmd + strafeCmd + turnCmd);
-            motorFR.setPower(driveCmd - strafeCmd - turnCmd);
-            motorRL.setPower(driveCmd - strafeCmd + turnCmd);
-            motorRR.setPower(driveCmd + strafeCmd - turnCmd);
+            motorFL.setPower(driveCmd + strafeCmd);
+            motorFR.setPower(driveCmd - strafeCmd);
+            motorRL.setPower(driveCmd - strafeCmd);
+            motorRR.setPower(driveCmd + strafeCmd);
 
             //Telemetry
             telemetry.addData("X Position [in]", absPosnX);
@@ -275,7 +268,6 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
             telemetry.addData("Orientation [deg]", absPosnTheta);
             telemetry.addData("Drive", driveCmd);
             telemetry.addData("Strafe", strafeCmd);
-            telemetry.addData("Turn", turnCmd);
             telemetry.update();
         }
         //Stop motors when complete
@@ -285,8 +277,7 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
         motorRR.setPower(0);
     }
 
-
-    public void pidTurnCommand(double thetaTarget, double maxPower, double timeout){  //Function to turn the robot
+    public void pidTurnCommand(double thetaTarget, double maxPower, double timeout){
         //PID controller declarations
         double Kp = 0.08;  //[--]
         double Ki = 0.000005;  //[--]
@@ -336,11 +327,10 @@ public class B_LeftFoundation_ParkRightWall extends LinearOpMode {
             }  //If robot is within specified drive/strafe/turn tolerances, exit the loop early, otherwise it will exit after a timeout
 
             //PID summation
-            turnCmd = 0.5*(-Kp*thetaError - Ki*thetaIntegral - Kd*thetaDerivative);
+            turnCmd = -Kp*thetaError - Ki*thetaIntegral - Kd*thetaDerivative;
 
             //Clip values within maximum specified power range
             turnCmd = Range.clip(turnCmd, -maxPower, maxPower);
-
 
             //Send calculated power to wheels using mecanum equations
             motorFL.setPower(turnCmd);

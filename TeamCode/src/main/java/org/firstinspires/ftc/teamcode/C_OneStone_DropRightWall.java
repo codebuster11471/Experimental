@@ -46,9 +46,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name="B_LeftFndtn_ParkRightBridge", group="Codebusters")
+@Autonomous(name="C_OneStone_DropRightWall", group="Codebusters")
 //@Disabled
-public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
+public class C_OneStone_DropRightWall extends LinearOpMode {
+
     //Detector declaration
     private modifiedGoldDetector detector;
 
@@ -66,10 +67,6 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
     Servo servoL;  //Left fang servo
     Servo   servoR;  //Right fang servo
 
-    //IMU declarations
-    BNO055IMU imu;
-    Orientation angles;
-
     //Odometry declarations
     double absPosnX = 0;  //Absolute x position storage variable
     double absPosnY = 0;  //Absolute y position storage variable
@@ -84,6 +81,11 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
     static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
 
+    //IMU declarations
+    BNO055IMU imu;
+    Orientation angles;
+
+
     int skystoneLocation = -1;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -92,7 +94,7 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
     public void runOpMode() {
         //Intialize the computer vision detector
         detector = new modifiedGoldDetector(); //Create detector
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.FRONT); //Initialize it with the app context and camera
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); //Initialize it with the app context and camera
         detector.enable(); //Start the detector
 
         //Initialize the drivetrain
@@ -105,6 +107,7 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
         motorRL.setDirection(DcMotor.Direction.FORWARD);
         motorRR.setDirection(DcMotor.Direction.REVERSE);
 
+        //Initialize the intake/outtake
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
         intakeR.setDirection(DcMotor.Direction.FORWARD);
@@ -113,7 +116,6 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
         //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
-        foundationFangs(0);
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -135,36 +137,62 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
         telemetry.addData(">", "Waiting for start");
         telemetry.update();
 
+
         //Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         skystoneLocation = detector.isFound();
+
         /**
          * *****************
          * OpMode Begins Here
          * *****************
          */
+
         //Disable the detector
         if(detector != null) detector.disable();
 
+
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            pidDriveCommand(-32, 32, 0.2, 4);
+            if(skystoneLocation == 1) {
+                pidDriveCommand(26, -10, 0.25, 3);
+                intakeOperation(1);
+                pidDriveCommand(38, -10, 0.10, 3);
+                pidDriveCommand(2, -10, 0.25, 4);
+                pidDriveCommand(2, 58, 0.25, 6);
+                intakeOperation(-1);
+                pidDriveCommand(-1, -1, 0, 1);
+                intakeOperation(0);
+                pidDriveCommand(2, 36, 0.25, 3);
+            }
+            if(skystoneLocation == 2) {
+                pidDriveCommand(26, 0,  0.25, 3);
+                intakeOperation(1);
+                pidDriveCommand(38, 0,  0.10, 3);
+                pidDriveCommand(2, 0, 0.25, 4);
+                pidDriveCommand(2, 58, 0.25, 6);
+                intakeOperation(-1);
+                pidDriveCommand(-1, -1,  0, 1);
+                intakeOperation(0);
+                pidDriveCommand(2, 36, 0.25, 3);
+            }
+            if(skystoneLocation == 3) {
+                pidDriveCommand(26, 10, 0.25, 3);
+                intakeOperation(1);
+                pidDriveCommand(38, 10, 0.10, 3);
+                pidDriveCommand(2, 10, 0.25, 4);
+                pidDriveCommand(2, 58, 0.25, 6);
+                intakeOperation(-1);
+                pidDriveCommand(-1, -1,  0, 1);
+                intakeOperation(0);
+                pidDriveCommand(2, 36, 0.25, 3);
+            }
             pidTurnCommand(0, 0.25, 2);
-            pidDriveCommand(-38, 32, 0.15, 1.5);
-            foundationFangs(1);
-            pidDriveCommand(-1, -1,  0, 0.5);
-            pidDriveCommand(-4, 32, 0.2, 8);
-            foundationFangs(0);
-            pidTurnCommand(0, 0.25, 1);
-            pidDriveCommand(-6, 32, 0.15, 2);
-            pidDriveCommand(-6, -2, 0.25, 3);
-            pidDriveCommand(-26, -2, 0.25, 3);
-            pidDriveCommand(-26, -25, 0.25, 2.5);
-            pidTurnCommand(180, 0.25, 5);
             break;
         }
         //Shutdown on STOP
+        intakeOperation(0);
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorRL.setPower(0);
@@ -174,14 +202,18 @@ public class B_LeftFoundation_ParkRightBridge extends LinearOpMode {
     }
 
 
-    public void foundationFangs(int fangOperationCmd) {  //Function to open/close fangs
-        if(fangOperationCmd == 1) {
-            servoL.setPosition(0.33);
-            servoR.setPosition(0.33);
+    public void intakeOperation(int intakeOperationCmd) {
+        if(intakeOperationCmd == 1) {
+            intakeL.setPower(1);
+            intakeR.setPower(1);
         }
-        else if(fangOperationCmd == 0) {
-            servoL.setPosition(0);
-            servoR.setPosition(0);
+        else if(intakeOperationCmd == -1) {
+            intakeL.setPower(-0.65);
+            intakeR.setPower(-0.65);
+        }
+       else if(intakeOperationCmd == 0) {
+            intakeL.setPower(0);
+            intakeR.setPower(0);
         }
     }
 
