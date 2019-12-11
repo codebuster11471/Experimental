@@ -22,7 +22,7 @@ public class odometryPositionUpdate implements Runnable {
     double encoderFL = 0, encoderFR = 0, encoderRL = 0, encoderRR = 0;  //[cnt];  Intialize encoder count = 0
     double lastEncoderFL = 0, lastEncoderFR = 0, lastEncoderRL = 0, lastEncoderRR = 0;  //[cnt];  Intialize last encoder count = 0
     double odometryX = 0, odometryY = 0, odometryTheta = 0;  //[inch];  Initialize at 0
-    double odometryXtemp =0, odometryYtemp = 0;  //[inch];  Storage variables
+    double dx =0, dxTemp = 0, dy =0, dyTemp = 0;  //[inch];  Storage variables
 
     //Algorithm constants
     double inchPerCount;  //[inch/cnt]
@@ -72,9 +72,17 @@ public class odometryPositionUpdate implements Runnable {
 
         //Position update equations using 4-wheel mecanum inputs, see
         //https://github.com/acmerobotics/road-runner/blob/master/doc/pdf/Mobile_Robot_Kinematics_for_FTC.pdf
-        odometryX = odometryX + (deltaFL + deltaFR + deltaRL + deltaRR)/4;  //[inch]
-        odometryY = odometryY + (-deltaFL + deltaFR + deltaRL - deltaRR)/4;  //[inch]
-        odometryTheta = odometryTheta + (-deltaFL + deltaFR - deltaRL + deltaRR)/2/(trackWidth+wheelBase);  //[inch]
+        dx = (deltaFL + deltaFR + deltaRL + deltaRR)/4;  //[inch]
+        dy = (-deltaFL + deltaFR + deltaRL - deltaRR)/4;  //[inch]
+
+        //Angular correction, see Wikipedia topic "Rotation Matrix"
+        dxTemp = dx*Math.cos(Math.toRadians(odometryTheta)) - dy*Math.sin(Math.toRadians(odometryTheta));
+        dyTemp = dx*Math.sin(Math.toRadians(odometryTheta)) + dy*Math.cos(Math.toRadians(odometryTheta));
+
+        //Final positions
+        odometryX = odometryX + dxTemp;  //[inch]
+        odometryY = odometryY + dyTemp;  //[inch]
+        odometryTheta = odometryTheta + (-deltaFL + deltaFR - deltaRL + deltaRR)/4/(trackWidth/2+wheelBase/2);  //[inch]
 
         //Angular correction, see Wikipedia topic "Rotation Matrix"
 //        odometryXtemp = odometryX*Math.cos(Math.toRadians(odometryTheta)) - odometryY*Math.sin(Math.toRadians(odometryTheta));
