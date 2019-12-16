@@ -69,8 +69,8 @@ public class Driver_Op_Autonomous_Learn extends OpMode
     private DcMotor motorFR = null;
     private DcMotor motorRL = null;
     private DcMotor motorRR = null;
-    private double driver1SpeedKTurbo = 0.30;  //1.0 = 100% power
-    private double driver1SpeedKStandard = 0.30;  //0.XX = XX% power
+    private double driver1SpeedKTurbo = 0.80;  //1.0 = 100% power
+    private double driver1SpeedKStandard = 0.40;  //0.XX = XX% power
     private double driver1SpeedKLast = driver1SpeedKStandard;  //Initialize at standard speed
     private double driver1SpeedKTemp = driver1SpeedKStandard;  //Initialize at standard speed
     private double driver1SpeedKFinal = driver1SpeedKStandard;  //Initialize at standard speed
