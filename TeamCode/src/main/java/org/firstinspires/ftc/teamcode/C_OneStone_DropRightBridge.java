@@ -158,35 +158,35 @@ public class C_OneStone_DropRightBridge extends LinearOpMode {
             if(skystoneLocation == 1) {
                 pidDriveCommand(26, -10, 0.25, 3);
                 intakeOperation(1);
-                pidDriveCommand(38, -10, 0.10, 3);
-                pidDriveCommand(26, -10, 0.25, 2);
-                pidDriveCommand(26, 58, 0.25, 6);
+                pidDriveCommand(46, -10, 0.10, 3);
+                pidDriveCommand(20, -10, 0.25, 2);
+                pidDriveCommand(20, 64, 0.25, 6);
                 intakeOperation(-1);
                 pidDriveCommand(-1, -1,  0, 1);
                 intakeOperation(0);
-                pidDriveCommand(26, 36, 0.25, 3);
+                pidDriveCommand(20, 36, 0.25, 3);
             }
             if(skystoneLocation == 2) {
                 pidDriveCommand(26, 0, 0.25, 3);
                 intakeOperation(1);
-                pidDriveCommand(38, 0, 0.10, 3);
-                pidDriveCommand(26, 0, 0.25, 2);
-                pidDriveCommand(26, 58, 0.25, 6);
+                pidDriveCommand(46, 0, 0.10, 3);
+                pidDriveCommand(20, 0, 0.25, 2);
+                pidDriveCommand(20, 64, 0.25, 6);
                 intakeOperation(-1);
                 pidDriveCommand(-1, -1,  0, 1);
                 intakeOperation(0);
-                pidDriveCommand(26, 36, 0.25, 3);
+                pidDriveCommand(20, 36, 0.25, 3);
             }
             if(skystoneLocation == 3) {
                 pidDriveCommand(26, 10, 0.25, 3);
                 intakeOperation(1);
-                pidDriveCommand(38, 10, 0.10, 3);
-                pidDriveCommand(26, 10, 0.25, 2);
-                pidDriveCommand(26, 58, 0.25, 6);
+                pidDriveCommand(46, 10, 0.10, 3);
+                pidDriveCommand(20, 10, 0.25, 2);
+                pidDriveCommand(20, 64, 0.25, 6);
                 intakeOperation(-1);
                 pidDriveCommand(-1, -1,  0, 1);
                 intakeOperation(0);
-                pidDriveCommand(26, 36, 0.25, 3);
+                pidDriveCommand(20, 36, 0.25, 3);
             }
             pidTurnCommand(0, 0.25, 2);
             break;

@@ -158,9 +158,9 @@ public class C_OneStone_DropLeftWall extends LinearOpMode {
             if(skystoneLocation == 1) {
                 pidDriveCommand(26, -10, 0.25, 3);
                 intakeOperation(1);
-                pidDriveCommand(38, -10, 0.10, 3);
+                pidDriveCommand(46, -10, 0.10, 3);
                 pidDriveCommand(2, -10, 0.25, 4);
-                pidDriveCommand(2, -58, 0.25, 6);
+                pidDriveCommand(2, -64, 0.25, 6);
                 intakeOperation(-1);
                 pidDriveCommand(-1, -1,  0, 1);
                 intakeOperation(0);
@@ -169,9 +169,9 @@ public class C_OneStone_DropLeftWall extends LinearOpMode {
             if(skystoneLocation == 2) {
                 pidDriveCommand(26, 0, 0.25, 3);
                 intakeOperation(1);
-                pidDriveCommand(38, 0, 0.10, 3);
+                pidDriveCommand(46, 0, 0.10, 3);
                 pidDriveCommand(2, 0, 0.25, 4);
-                pidDriveCommand(2, -58, 0.25, 6);
+                pidDriveCommand(2, -64, 0.25, 6);
                 intakeOperation(-1);
                 pidDriveCommand(-1, -1,  0, 1);
                 intakeOperation(0);
@@ -180,9 +180,9 @@ public class C_OneStone_DropLeftWall extends LinearOpMode {
             if(skystoneLocation == 3) {
                 pidDriveCommand(26, 10, 0.25, 3);
                 intakeOperation(1);
-                pidDriveCommand(38, 10, 0.10, 3);
+                pidDriveCommand(46, 10, 0.10, 3);
                 pidDriveCommand(2, 10, 0.25, 4);
-                pidDriveCommand(2, -58, 0.25, 6);
+                pidDriveCommand(2, -64, 0.25, 6);
                 intakeOperation(-1);
                 pidDriveCommand(-1, -1,  0, 1);
                 intakeOperation(0);

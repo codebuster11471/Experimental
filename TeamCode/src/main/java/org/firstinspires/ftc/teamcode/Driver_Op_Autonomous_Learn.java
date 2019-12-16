@@ -30,8 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -61,9 +59,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Driver_Op_With_IMU", group="Iterative Opmode")
+@TeleOp(name="Driver_Op_Autonomous_Learn", group="Iterative Opmode")
 //@Disabled
-public class Driver_Op_With_IMU extends OpMode
+public class Driver_Op_Autonomous_Learn extends OpMode
 {
     //Drive system declarations
     private ElapsedTime runtime = new ElapsedTime();
@@ -71,8 +69,8 @@ public class Driver_Op_With_IMU extends OpMode
     private DcMotor motorFR = null;
     private DcMotor motorRL = null;
     private DcMotor motorRR = null;
-    private double driver1SpeedKTurbo = 1.0;  //1.0 = 100% power
-    private double driver1SpeedKStandard = 0.50;  //0.XX = XX% power
+    private double driver1SpeedKTurbo = 0.30;  //1.0 = 100% power
+    private double driver1SpeedKStandard = 0.30;  //0.XX = XX% power
     private double driver1SpeedKLast = driver1SpeedKStandard;  //Initialize at standard speed
     private double driver1SpeedKTemp = driver1SpeedKStandard;  //Initialize at standard speed
     private double driver1SpeedKFinal = driver1SpeedKStandard;  //Initialize at standard speed
@@ -111,6 +109,21 @@ public class Driver_Op_With_IMU extends OpMode
     Servo   servoR;  //Right fang servo
     boolean fangsClosed = false;  //Fang position tracker, FALSE = open, TRUE = closed
 
+    //Deadwheel declarations
+    private DcMotor deadwheelX = null;
+    private DcMotor deadwheelY = null;
+
+    //Odometry declarations
+    double positionX = 0, positionY, theta = 0;
+    static final double countsPerMotorRev = 2400;  //Signswise encoder in quadrature mode; 600ppr*4 = 2400cpr
+    static final double driveGearReduction = 1.0;  //This is < 1.0 if geared UP
+    static final double wheelDiameter = 2.0;  //Wheel diameter (in inches)
+    static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
+    static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
+    double x1 = -1.25, y1 = -3.25;  //[in];  x-deadwheel position
+    double x2 = 0, y2 = 4;  //[in];  y-deadwheel position
+    double lastEncoderX = 0, lastEncoderY = 0, lastTheta = 0;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -123,6 +136,10 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
+
+        //Initialize deadwheels
+        deadwheelX = hardwareMap.get(DcMotor.class, "deadwheelX");
+        deadwheelY = hardwareMap.get(DcMotor.class, "deadwheelY");
 
         //Set motor direction
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -144,6 +161,18 @@ public class Driver_Op_With_IMU extends OpMode
         //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
+
+        //Reset encoders
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        deadwheelX.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        deadwheelY.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /*
@@ -171,12 +200,11 @@ public class Driver_Op_With_IMU extends OpMode
      */
     @Override
     public void loop() {
-//*******POLL IMU FOR DATA************************************************************************//
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("firstAngle",  angles.firstAngle);
+        deadwheelPositionUpdate();
 
+//*******POLL IMU FOR DATA************************************************************************//
         if (gamepad1.a && gamepad1.x && gamepad1.y){  //Store current heading to offset and initial error
-            headingOffset = angles.firstAngle;
+            headingOffset = theta;
         }
 //************************************************************************************************//
 
@@ -242,7 +270,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRL.setPower(motorRLpowerFinal);
         motorRR.setPower(motorRRpowerFinal);
 
-        telemetry.addData("Kdriver1", driver1SpeedKFinal);
+//        telemetry.addData("Kdriver1", driver1SpeedKFinal);
 //************************************************************************************************//
 
 
@@ -260,7 +288,7 @@ public class Driver_Op_With_IMU extends OpMode
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
         }
-        telemetry.addData("Range =", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+//        telemetry.addData("Range =", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
 //            if (sensorRange.getDistance (DistanceUnit.INCH) < 6) {
             //Turn off intake if it is already on
 //            intakeOpFinal = 0.00;
@@ -280,7 +308,7 @@ public class Driver_Op_With_IMU extends OpMode
             outtakeOpFinal = 0.00;
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
-            telemetry.addLine("Block ejected outtake off");
+//            telemetry.addLine("Block ejected outtake off");
         }
 
         if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
@@ -315,5 +343,43 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR.setPower(0);
         imu.close();
         telemetry.addLine("kthxbye");
+    }
+
+    public void deadwheelPositionUpdate() {
+        double encoderX = 0, encoderY = 0;
+        double dx = 0, dy = 0, dTheta;
+        double xTemp = 0, yTemp = 0;
+
+        //Read/poll current data positions
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        theta = angles.firstAngle;
+        encoderX = deadwheelX.getCurrentPosition();
+        encoderY = deadwheelY.getCurrentPosition();
+
+        //x/y position update equations using 2-wheel + IMU.  See
+        //https://github.com/acmerobotics/road-runner/blob/master/doc/pdf/Mobile_Robot_Kinematics_for_FTC.pdf
+        dTheta = theta - lastTheta;
+        dx =(encoderX-lastEncoderX) * inchPerCount - y1*(Math.toRadians(dTheta));
+        dy =(encoderY-lastEncoderY) * inchPerCount - x2*(Math.toRadians(dTheta));
+
+        //Update lastEncoder values
+        lastEncoderX = encoderX;
+        lastEncoderY = encoderY;
+        lastTheta = theta;
+
+        //Angular correction, see Wikipedia topic "Rotation Matrix"
+        xTemp = dx*Math.cos(Math.toRadians(theta)) -   dy*Math.sin(Math.toRadians(theta));
+        yTemp = dx*Math.sin(Math.toRadians(theta)) + dy*Math.cos(Math.toRadians(theta));  //Note sign change on cos term
+        dx = xTemp;
+        dy = -yTemp;  //Note sign change
+
+        positionX = positionX + dx;  //[inch]
+        positionY = positionY + dy;  //[inch]
+
+        //Telemetry
+        telemetry.addData("x Position =", positionX);
+        telemetry.addData("y Position =", positionY);
+        telemetry.addData("Heading =", theta);
+        telemetry.update();
     }
 }

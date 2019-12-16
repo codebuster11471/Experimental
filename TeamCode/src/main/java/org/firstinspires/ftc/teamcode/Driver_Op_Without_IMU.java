@@ -141,6 +141,8 @@ public class Driver_Op_Without_IMU extends OpMode
      */
     @Override
     public void init_loop() {
+        telemetry.addData(">", "Waiting for start");
+        telemetry.update();
     }
 
     /*
@@ -149,7 +151,6 @@ public class Driver_Op_Without_IMU extends OpMode
     @Override
     public void start() {
         runtime.reset();
-
     }
 
     /*
@@ -189,7 +190,7 @@ public class Driver_Op_Without_IMU extends OpMode
             driver1SpeedKLast = driver1SpeedKTemp;
         }
         if (fangsClosed == true ) {
-            driver1SpeedKFinal = 0.20 ;  //Override to Very Slow if fangs are closed
+            driver1SpeedKFinal = 0.25 ;  //Override to Very Slow if fangs are closed
         }
         else {
             driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain

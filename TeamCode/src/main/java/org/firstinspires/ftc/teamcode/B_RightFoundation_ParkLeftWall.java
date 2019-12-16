@@ -150,15 +150,15 @@ public class B_RightFoundation_ParkLeftWall extends LinearOpMode {
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             pidDriveCommand(-32, -32, 0.2, 4);
-            pidTurnCommand(0, 0.25, 2);
-            pidDriveCommand(-38, -32, 0.15, 1.5);
+//            pidTurnCommand(0, 0.25, 2);
+            pidDriveCommand(-40, -32, 0.15, 1.5);
             foundationFangs(1);
             pidDriveCommand(-1, -1,  0, 0.5);
-            pidDriveCommand(-4, -32, 0.2, 8);
+            pidDriveCommand(0, -32, 0.2, 8);
             foundationFangs(0);
             pidTurnCommand(0, 0.25, 1);
-            pidDriveCommand(-6, -32, 0.15, 2);
-            pidDriveCommand(-6, 25, 0.25, 6);
+            pidDriveCommand(-2, -32, 0.15, 2);
+            pidDriveCommand(-2, 25, 0.25, 6);
             pidTurnCommand(180, 0.25, 5);
             break;
         }
