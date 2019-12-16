@@ -59,9 +59,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Driver_Op_Autonomous_Learn", group="Iterative Opmode")
+@TeleOp(name="Waypoint_Learning_Tool", group="Iterative Opmode")
 //@Disabled
-public class Driver_Op_Autonomous_Learn extends OpMode
+public class Waypoint_Learning_Tool extends OpMode
 {
     //Drive system declarations
     private ElapsedTime runtime = new ElapsedTime();
@@ -108,21 +108,19 @@ public class Driver_Op_Autonomous_Learn extends OpMode
     Servo   servoL;  //Left fang servo
     Servo   servoR;  //Right fang servo
     boolean fangsClosed = false;  //Fang position tracker, FALSE = open, TRUE = closed
-
     //Deadwheel declarations
     private DcMotor deadwheelX = null;
     private DcMotor deadwheelY = null;
-
     //Odometry declarations
-    double positionX = 0, positionY, theta = 0;
+    double positionX = 0, positionY, theta = 0;  //Storage variables, the current value
+    double lastEncoderX = 0, lastEncoderY = 0, lastTheta = 0;  //Storage variables, the previous value
     static final double countsPerMotorRev = 2400;  //Signswise encoder in quadrature mode; 600ppr*4 = 2400cpr
     static final double driveGearReduction = 1.0;  //This is < 1.0 if geared UP
     static final double wheelDiameter = 2.0;  //Wheel diameter (in inches)
     static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
-    double x1 = -1.25, y1 = -3.25;  //[in];  x-deadwheel position
-    double x2 = 0, y2 = 4;  //[in];  y-deadwheel position
-    double lastEncoderX = 0, lastEncoderY = 0, lastTheta = 0;
+    double x1 = -1.25, y1 = -3.25;  //[in];  x-deadwheel position relative to robot center
+    double x2 = 0.125, y2 = 4.125;  //[in];  y-deadwheel position relative to robot center
 
     /*
      * Code to run ONCE when the driver hits INIT

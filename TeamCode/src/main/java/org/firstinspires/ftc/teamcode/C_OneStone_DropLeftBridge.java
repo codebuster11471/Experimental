@@ -51,39 +51,32 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 @Autonomous(name="C_OneStone_DropLeftBridge", group="Codebusters")
 //@Disabled
 public class C_OneStone_DropLeftBridge extends LinearOpMode {
-
     //Detector declaration
     private modifiedGoldDetector detector;
-
     //Motor declarations
     private DcMotor motorFL = null;
     private DcMotor motorFR = null;
     private DcMotor motorRL = null;
     private DcMotor motorRR = null;
-
-    //Deadwheel declarations
-    private DcMotor deadwheelX = null;
-    private DcMotor deadwheelY = null;
-
     //Intake/outtake system declarations
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
-
     //Fang Declarations
     Servo servoL;  //Left fang servo
     Servo   servoR;  //Right fang servo
-
+    //Deadwheel declarations
+    private DcMotor deadwheelX = null;
+    private DcMotor deadwheelY = null;
     //Odometry declarations
-    double positionX = 0, positionY, theta = 0;
+    double positionX = 0, positionY, theta = 0;  //Storage variables, the current value
+    double lastEncoderX = 0, lastEncoderY = 0, lastTheta = 0;  //Storage variables, the previous value
     static final double countsPerMotorRev = 2400;  //Signswise encoder in quadrature mode; 600ppr*4 = 2400cpr
     static final double driveGearReduction = 1.0;  //This is < 1.0 if geared UP
     static final double wheelDiameter = 2.0;  //Wheel diameter (in inches)
     static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameter * 3.1415);  //Encoder counts per inch of travel
     static final double inchPerCount = (wheelDiameter * 3.1415) / (countsPerMotorRev * driveGearReduction);  //Inches of travel per encoder count
-    double x1 = -1.25, y1 = -3.25;  //[in];  x-deadwheel position
-    double x2 = 0, y2 = 4;  //[in];  y-deadwheel position
-    double lastEncoderX = 0, lastEncoderY = 0, lastTheta = 0;
-
+    double x1 = -1.25, y1 = -3.25;  //[in];  x-deadwheel position relative to robot center
+    double x2 = 0.125, y2 = 4.125;  //[in];  y-deadwheel position relative to robot center
     //IMU declarations
     BNO055IMU imu;
     Orientation angles;
@@ -98,7 +91,6 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
         detector = new modifiedGoldDetector(); //Create detector
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), DogeCV.CameraMode.BACK); //Initialize it with the app context and camera
         detector.enable(); //Start the detector
-
         //Initialize the drivetrain
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
@@ -108,28 +100,22 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorRL.setDirection(DcMotor.Direction.FORWARD);
         motorRR.setDirection(DcMotor.Direction.REVERSE);
-
         //Initialize the intake/outtake
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
         intakeR.setDirection(DcMotor.Direction.FORWARD);
         intakeL.setDirection(DcMotor.Direction.REVERSE);
-
         //Initialize deadwheels
         deadwheelX = hardwareMap.get(DcMotor.class, "deadwheelX");
         deadwheelY = hardwareMap.get(DcMotor.class, "deadwheelY");
-
-
         //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
-
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
         //Reset encoders
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -142,14 +128,10 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
         deadwheelX.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         deadwheelY.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        telemetry.addData("IsFound: ", detector.isFound());
+        //Wait for the game to start (driver presses PLAY)
         telemetry.addData(">", "Waiting for start");
         telemetry.update();
-
-
-        //Wait for the game to start (driver presses PLAY)
         waitForStart();
-//        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         skystoneLocation = detector.isFound();
 
         /**
@@ -167,7 +149,7 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
                 pidDriveCommand(24, -16, -45, 0.35, 5); //Drive forward (center skystone)
                 intakeOperation(1); //Intake on
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //Wait a little bit
-                pidDriveCommand(36, -16, -45, 0.35, 5);  //Approach skystone
+                pidDriveCommand(40, -16, -45, 0.35, 5);  //Approach skystone
                 pidDriveCommand(18, -16, 0, 0.35, 5);  //Backup
                 pidDriveCommand(18, -52, 0, 0.35, 5);  //Drive under bridge
                 intakeOperation(-1);  //Outtake on
@@ -179,7 +161,7 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
                 pidDriveCommand(24, -8, -45, 0.35, 5); //Drive forward (center skystone)
                 intakeOperation(1); //Intake on
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //Wait a little bit
-                pidDriveCommand(36, -8, -45, 0.35, 5);  //Approach skystone
+                pidDriveCommand(40, -8, -45, 0.35, 5);  //Approach skystone
                 pidDriveCommand(18, -8, 0, 0.35, 5);  //Backup
                 pidDriveCommand(18, -52, 0, 0.35, 5);  //Drive under bridge
                 intakeOperation(-1);  //Outtake on
@@ -191,7 +173,7 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
                 pidDriveCommand(24, 0, -45, 0.35, 5); //Drive forward (center skystone)
                 intakeOperation(1); //Intake on
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //Wait a little bit
-                pidDriveCommand(36, 0, -45, 0.35, 5);  //Approach skystone
+                pidDriveCommand(40, 0, -45, 0.35, 5);  //Approach skystone
                 pidDriveCommand(18, 0, 0, 0.35, 5);  //Backup
                 pidDriveCommand(18, -52, 0, 0.35, 5);  //Drive under bridge
                 intakeOperation(-1);  //Outtake on
@@ -209,6 +191,18 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
         motorRR.setPower(0);
         imu.close();
         if(detector != null) detector.disable();
+    }
+
+
+    public void foundationFangs(int fangOperationCmd) {  //Function to open/close fangs
+        if(fangOperationCmd == 1) {
+            servoL.setPosition(0.33);
+            servoR.setPosition(0.33);
+        }
+        else if(fangOperationCmd == 0) {
+            servoL.setPosition(0);
+            servoR.setPosition(0);
+        }
     }
 
 
@@ -269,7 +263,7 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
 
     public void pidDriveCommand(double xTarget, double yTarget, double thetaTarget, double maxPower, double timeout){
         //PID controller declarations
-        double Kp = 0.08;  //[--]
+        double Kp = (1-maxPower)/6;  //[--];  Kp is dependent on the maxPower input
         double Ki = 0.000005;  //[--]
         double Kd = 0.0008;  //[--]
         double xError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
@@ -284,7 +278,7 @@ public class C_OneStone_DropLeftBridge extends LinearOpMode {
         double prevYError = 0;
         double prevXError = 0;
         double prevThetaError = 0;
-        double xyTol = 0.1;  //[inch]; Allowable strafe/drive error before exiting PID loop
+        double xyTol = 0.25;  //[inch]; Allowable strafe/drive error before exiting PID loop
         double thetaTol = 0.1;  //[deg]; Allowable turn error before exiting PID loop
         double driveCmdtemp = 0;  //Storage variable
         double strafeCmdtemp = 0;  //Storage variable

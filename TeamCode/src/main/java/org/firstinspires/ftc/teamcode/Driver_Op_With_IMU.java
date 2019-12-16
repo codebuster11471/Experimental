@@ -144,6 +144,16 @@ public class Driver_Op_With_IMU extends OpMode
         //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
+
+        //Reset encoders
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /*
@@ -162,8 +172,8 @@ public class Driver_Op_With_IMU extends OpMode
     public void start() {
         runtime.reset();
 
-        //Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+//        //Start the logging of measured acceleration
+//        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
 
     /*
