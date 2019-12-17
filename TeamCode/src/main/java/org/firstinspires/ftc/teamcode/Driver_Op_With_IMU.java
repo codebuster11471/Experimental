@@ -135,7 +135,7 @@ public class Driver_Op_With_IMU extends OpMode
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu2");
         imu.initialize(parameters);
 
         //Initialize distance sensor
