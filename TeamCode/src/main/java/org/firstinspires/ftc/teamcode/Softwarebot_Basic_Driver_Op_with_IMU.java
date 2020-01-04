@@ -33,6 +33,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
@@ -58,7 +59,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 @TeleOp(name="Softwarebot Basic Driver with IMU", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class Softwarebot_Basic_Driver_Op_with_IMU extends OpMode
 {
     // Declare OpMode members.
@@ -172,8 +173,6 @@ public class Softwarebot_Basic_Driver_Op_with_IMU extends OpMode
             driver1SpeedKLast = driver1SpeedKTemp;
         }
         driveSpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
-
-
 
 
         //IMU heading correction.  Apply rotation to drive and strafe vectors
