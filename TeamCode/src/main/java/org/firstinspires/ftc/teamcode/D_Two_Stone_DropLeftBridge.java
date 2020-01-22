@@ -167,7 +167,7 @@ public class D_Two_Stone_DropLeftBridge extends LinearOpMode {
                 pidDriveCommand(27, -56, 0, 0.75, 5);  //1st bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(23, 18, 0, 0.75, 5);  //2nd position
+                pidDriveCommand(23, 17, 0, 0.75, 5);  //2nd position
                 intakeOperation(1); //Intake on
                 pidDriveCommand(37, 20,  -30, 0.3, 5);  //2nd stone grab
                 pidDriveCommand(23, 5, 0, 0.6, 5);  //2nd backup
