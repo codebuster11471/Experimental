@@ -145,21 +145,23 @@ public class D_Two_Stone_DropLeftWall extends LinearOpMode {
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if(skystoneLocation == 1) {//Stone nearest the bridge
-                pidDriveCommand(29, -20, -38, 0.6, 5); //1st position
+                pidDriveCommand(32, -16, -32, 0.6, 5); //1st position
                 intakeOperation(1); //Intake on
-                pidDriveCommand(39, -13,  -38, 0.3, 5);  //1st stone grab
-                pidDriveCommand(27, -12, 0, 0.6, 5);  //1st backup
-                pidDriveCommand(27, -56, 0, 0.75, 5);  //1st bridge
+                pidDriveCommand(38, -12.5  ,  -55, 0.3, 5);  //1st stone grab
+                pidDriveCommand(26, -14, 0, 0.6, 5);  //1st backup
+                pidDriveCommand(26, -53, 0, 0.75, 5);  //1st bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(23, 10, 0, 0.75, 5);  //2nd position
+                pidDriveCommand(26, -21, -90, 0.75, 5);  //2nd setup
+                pidDriveCommand(40, -3, -90, 0.75, 5);  //2nd forward
                 intakeOperation(1); //Intake on
-                pidDriveCommand(40, 13,  -25, 0.3, 5);  //2nd stone grab
-                pidDriveCommand(23, 5, 0, 0.6, 5);  //2nd backup
-                pidDriveCommand(27, -56, -10, 0.75, 5); //2nd bridge
+                pidDriveCommand(40, 5,  -90, 0.3, 5);  //2nd stone grab
+                pidDriveCommand(26, -21, -90, 0.6, 5);  //2nd backup
+                pidDriveCommand(26, -56, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off
-                pidDriveCommand(2, -35, 0, 0.4, 5);  //Alliance park
+                pidDriveCommand(5, -56, 0, 0.4, 5);  //Alliance park setup
+                pidDriveCommand(5, -41, 0, 0.4, 5);  //Alliance park
                 intakeOperation(0); //Intake off
             }
             if(skystoneLocation == 2) {
