@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
+package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -27,13 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
-
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.skystone.modifiedGoldDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -46,9 +45,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name="D_Two_Stone_DropLeftWall", group="Codebusters")
-//@Disabled
-public class D_Two_Stone_DropLeftWall extends LinearOpMode {
+@Autonomous(name="D_OLD_Two_Stone_DropLeftBridge", group="Codebusters")
+@Disabled
+public class D_OLD_Two_Stone_DropLeftBridge extends LinearOpMode {
     //Detector declaration
     private modifiedGoldDetector detector;
     //Motor declarations
@@ -141,27 +140,25 @@ public class D_Two_Stone_DropLeftWall extends LinearOpMode {
         //Disable the detector
         if(detector != null) detector.disable();
 
-
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if(skystoneLocation == 1) {//Stone nearest the bridge
                 pidDriveCommand(32, -16, -32, 0.6, 5); //1st position
                 intakeOperation(1); //Intake on
-                pidDriveCommand(38, -12.5  ,  -55, 0.3, 5);  //1st stone grab
+                pidDriveCommand(38, -12.5, -55, 0.3, 5);  //1st stone grab
                 pidDriveCommand(26, -14, 0, 0.6, 5);  //1st backup
                 pidDriveCommand(26, -53, 0, 0.75, 5);  //1st bridge
                 intakeOperation(-1); //Intake out
-                pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(26, -21, -90, 0.75, 5);  //2nd setup
-                pidDriveCommand(40, -3, -90, 0.75, 5);  //2nd forward
+                pidDriveCommand(-1, -1, -1, 0, 0.5);  //1st drop off
+                pidDriveCommand(26, 1, -90, 0.75, 5);  //2nd setup
+                pidDriveCommand(40, 1, -90, 0.75, 5);  //2nd forward
                 intakeOperation(1); //Intake on
-                pidDriveCommand(40, 5,  -90, 0.3, 5);  //2nd stone grab
+                pidDriveCommand(40, 5, -90, 0.3, 5);  //2nd stone grab
                 pidDriveCommand(26, -21, -90, 0.6, 5);  //2nd backup
                 pidDriveCommand(26, -56, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off
-                pidDriveCommand(5, -56, 0, 0.4, 5);  //Alliance park setup
-                pidDriveCommand(5, -41, 0, 0.4, 5);  //Alliance park
+                pidDriveCommand(26, -32, 0, 0.4, 5);  //Alliance park
                 intakeOperation(0); //Intake off
             }
             if(skystoneLocation == 2) {
@@ -181,7 +178,7 @@ public class D_Two_Stone_DropLeftWall extends LinearOpMode {
                 pidDriveCommand(25, -60, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off
-                pidDriveCommand(2, -35, 0, 0.4, 5);  //Alliance park
+                pidDriveCommand(27, -35, 0, 0.4, 5);  //Alliance park
                 intakeOperation(0); //Intake off
             }
             if(skystoneLocation == 3) {//Stone nearest the wall
@@ -201,9 +198,8 @@ public class D_Two_Stone_DropLeftWall extends LinearOpMode {
                 pidDriveCommand(25, -60, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off
-                pidDriveCommand(2, -35, 0, 0.4, 5);  //Alliance park
+                pidDriveCommand(27, -35, 0, 0.4, 5);  //Alliance park
                 intakeOperation(0); //Intake off
-
             }
             break;
         }
@@ -239,7 +235,7 @@ public class D_Two_Stone_DropLeftWall extends LinearOpMode {
             intakeL.setPower(-0.65);
             intakeR.setPower(-0.65);
         }
-        else if(intakeOperationCmd == 0) {
+       else if(intakeOperationCmd == 0) {
             intakeL.setPower(0);
             intakeR.setPower(0);
         }
