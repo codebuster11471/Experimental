@@ -105,7 +105,7 @@ public class Driver_Op_With_IMU extends OpMode
     private double drive1temp = 0;  //Storage variable
     private double strafe1temp = 0;  //Storage variable
     //Distance sensor declarations
-    private DistanceSensor sensorRange;
+    //private DistanceSensor sensorRange;
     //Fang Declarations
     Servo   servoL;  //Left fang servo
     Servo   servoR;  //Right fang servo
@@ -139,7 +139,7 @@ public class Driver_Op_With_IMU extends OpMode
         imu.initialize(parameters);
 
         //Initialize distance sensor
-        sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
+        //sensorRange = hardwareMap.get(DistanceSensor.class, "BdistanceSensor");
 
         //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
@@ -270,7 +270,7 @@ public class Driver_Op_With_IMU extends OpMode
             outtakeOpTemp = 0.00;
             outtakeOpLast = 0.00;
         }
-        telemetry.addData("Range =", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+//        telemetry.addData("Range =", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
 //            if (sensorRange.getDistance (DistanceUnit.INCH) < 6) {
             //Turn off intake if it is already on
 //            intakeOpFinal = 0.00;
@@ -285,13 +285,14 @@ public class Driver_Op_With_IMU extends OpMode
             outtakeOpTemp = outtakeOpStart;
         } else if (gamepad2.right_bumper && outtakeOpLast > outtakeOpStop) {
             outtakeOpTemp = outtakeOpStop;
-        } if (sensorRange.getDistance (DistanceUnit.INCH) > 10.5) {
-            //Turn off outtake if it is already on
-            outtakeOpFinal = 0.00;
-            outtakeOpTemp = 0.00;
-            outtakeOpLast = 0.00;
-            telemetry.addLine("Block ejected outtake off");
         }
+//        if (sensorRange.getDistance (DistanceUnit.INCH) > 10.5) {
+//            //Turn off outtake if it is already on
+//            outtakeOpFinal = 0.00;
+//            outtakeOpTemp = 0.00;
+//            outtakeOpLast = 0.00;
+//            telemetry.addLine("Block ejected outtake off");
+//        }
 
         if (!gamepad2.right_bumper && outtakeOpLast != outtakeOpTemp) {  //This is to prevent toggle bounce when holding the Right Bumper; e.g. toggle on release
             outtakeOpLast = outtakeOpTemp;
