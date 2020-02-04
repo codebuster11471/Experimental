@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -88,6 +89,7 @@ public class Driver_Op_With_IMU extends OpMode
     //Intake/outtake system declarations
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
+    private DcMotor rampMotor = null;
     private double intakeOpStop = 0.00;  //0%
     private double intakeOpStart = 1.00;  //100%
     private double intakeOpLast = intakeOpStop;  //Initialize at stop
@@ -123,6 +125,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
+        rampMotor = hardwareMap.get(DcMotor.class, "rampMotor");
 
         //Set motor direction
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -131,6 +134,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR.setDirection(DcMotor.Direction.REVERSE);
         intakeR.setDirection(DcMotor.Direction.FORWARD);
         intakeL.setDirection(DcMotor.Direction.REVERSE);
+        rampMotor.setDirection(DcMotor.Direction.FORWARD); //TODO: Double check this
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -306,6 +310,7 @@ public class Driver_Op_With_IMU extends OpMode
         //Send calculated power to intake/outtake Motors
         intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
         intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
+        rampMotor.setPower(intakeOpFinal - outtakeOpFinal);
 //************************************************************************************************//
 
 
