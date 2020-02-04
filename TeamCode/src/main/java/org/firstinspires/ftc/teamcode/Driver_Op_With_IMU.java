@@ -112,6 +112,8 @@ public class Driver_Op_With_IMU extends OpMode
     Servo   servoL;  //Left fang servo
     Servo   servoR;  //Right fang servo
     boolean fangsClosed = false;  //Fang position tracker, FALSE = open, TRUE = closed
+    //Capstone Servo
+    Servo   capstone;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -148,6 +150,9 @@ public class Driver_Op_With_IMU extends OpMode
         //Initialize fangs
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
+
+        //Initialize capstone servo
+        capstone = hardwareMap.get(Servo.class, "capstone");
 
         //Reset encoders
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -206,6 +211,17 @@ public class Driver_Op_With_IMU extends OpMode
             servoL.setPosition(0.33);
             servoR.setPosition(0.33);
             fangsClosed = true;  //Keep track of fang position, as it can override drive speed
+        }
+//************************************************************************************************//
+
+//*******CAPSTONE SERVO OPERATION*****************************************************************//
+        //Dump CAPSTONE SERVO when pressing Right Trigger
+        if (gamepad2.dpad_down){
+            capstone.setPosition(50);
+        }
+        // Reset CAPSTONE SERVO when Pressing left trigger
+        if (gamepad2.dpad_up){
+            capstone.setPosition(0);
         }
 //************************************************************************************************//
 
