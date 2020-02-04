@@ -222,7 +222,7 @@ public class Driver_Op_With_IMU extends OpMode
             driver1SpeedKLast = driver1SpeedKTemp;
         }
         if (fangsClosed == true ) {
-            driver1SpeedKFinal = 0.25 ;  //Override to Very Slow if fangs are closed
+            driver1SpeedKFinal = 0.50 ;  //Override to Very Slow if fangs are closed
         }
         else {
             driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
