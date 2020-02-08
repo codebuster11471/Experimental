@@ -166,19 +166,19 @@ public class E_RedSide_BridgePark extends LinearOpMode {
 
             }
             if(skystoneLocation == 2) {
-                pidDriveCommand(0, 12, 90, 0.85, 2); //1st setup
-                pidDriveCommand(42, 12, 90, 0.85, 3); //1st forward
+                pidDriveCommand(0, 14, 90, 0.85, 2); //1st setup
+                pidDriveCommand(42, 14, 90, 0.85, 3); //1st forward
                 intakeOperation(1); //Intake on
-                pidDriveCommand(42, 2, 90, 0.4, 5);  //1st stone grab
-                pidDriveCommand(25, 2, 0, 0.75, 5);  //1st backup
+                pidDriveCommand(42, 6, 90, 0.6, 5);  //1st stone grab
+                pidDriveCommand(25, 6, 0, 0.75, 5);  //1st backup
                 pidDriveCommand(25, 60, 0, 0.85, 5);  //1st bridge
                 intakeOperation(-1);  //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(25, -11, 45, 0.85, 5);  //2nd setup
-                pidDriveCommand(42, -11, 90, 0.85, 5);  //2nd forward
+                pidDriveCommand(25, -9, 45, 0.85, 5);  //2nd setup
+                pidDriveCommand(42, -9, 90, 0.85, 5);  //2nd forward
                 intakeOperation(1); //Intake on
-                pidDriveCommand(42, -22,  90, 0.4, 5);  //2nd stone grab
-                pidDriveCommand(25, -22, 0, 0.75, 5);  //2nd backup
+                pidDriveCommand(42, -17,  90, 0.6, 5);  //2nd stone grab
+                pidDriveCommand(25, -17, 0, 0.75, 5);  //2nd backup
                 pidDriveCommand(25, 63, 0, 0.85, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off

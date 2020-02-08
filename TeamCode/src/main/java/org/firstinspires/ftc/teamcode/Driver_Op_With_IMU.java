@@ -89,7 +89,7 @@ public class Driver_Op_With_IMU extends OpMode
     //Intake/outtake system declarations
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
-    private DcMotor rampMotor = null;
+    //private DcMotor rampMotor = null;
     private double intakeOpStop = 0.00;  //0%
     private double intakeOpStart = 1.00;  //100%
     private double intakeOpLast = intakeOpStop;  //Initialize at stop
@@ -113,7 +113,7 @@ public class Driver_Op_With_IMU extends OpMode
     Servo   servoR;  //Right fang servo
     boolean fangsClosed = false;  //Fang position tracker, FALSE = open, TRUE = closed
     //Capstone Servo
-    Servo   capstone;
+    //Servo   capstone;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -127,7 +127,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
-        rampMotor = hardwareMap.get(DcMotor.class, "rampMotor");
+        //rampMotor = hardwareMap.get(DcMotor.class, "rampMotor");
 
         //Set motor direction
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -136,7 +136,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR.setDirection(DcMotor.Direction.REVERSE);
         intakeR.setDirection(DcMotor.Direction.FORWARD);
         intakeL.setDirection(DcMotor.Direction.REVERSE);
-        rampMotor.setDirection(DcMotor.Direction.FORWARD); //TODO: Double check this
+        //rampMotor.setDirection(DcMotor.Direction.FORWARD); //TODO: Double check this
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -152,7 +152,7 @@ public class Driver_Op_With_IMU extends OpMode
         servoR = hardwareMap.get(Servo.class, "servoR");
 
         //Initialize capstone servo
-        capstone = hardwareMap.get(Servo.class, "capstone");
+        //capstone = hardwareMap.get(Servo.class, "capstone");
 
         //Reset encoders
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -216,13 +216,13 @@ public class Driver_Op_With_IMU extends OpMode
 
 //*******CAPSTONE SERVO OPERATION*****************************************************************//
         //Dump CAPSTONE SERVO when pressing Right Trigger
-        if (gamepad2.dpad_down){
-            capstone.setPosition(50);
-        }
-        // Reset CAPSTONE SERVO when Pressing left trigger
-        if (gamepad2.dpad_up){
-            capstone.setPosition(0);
-        }
+//        if (gamepad2.dpad_down){
+//            capstone.setPosition(50);
+//        }
+//        // Reset CAPSTONE SERVO when Pressing left trigger
+//        if (gamepad2.dpad_up){
+//            capstone.setPosition(0);
+//        }
 //************************************************************************************************//
 
 //*******DRIVE OPERATION**************************************************************************//
@@ -326,7 +326,7 @@ public class Driver_Op_With_IMU extends OpMode
         //Send calculated power to intake/outtake Motors
         intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
         intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
-        rampMotor.setPower(intakeOpFinal - outtakeOpFinal);
+        //rampMotor.setPower(intakeOpFinal - outtakeOpFinal);
 //************************************************************************************************//
 
 
