@@ -46,9 +46,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name="E_BlueSide_WallPark", group="Codebusters")
+@Autonomous(name="F_BlueSide_WallPark", group="Codebusters")
 //@Disabled
-public class E_BlueSide_WallPark extends LinearOpMode {
+public class F_BlueSide_WallPark extends LinearOpMode {
     //Detector declaration
     private modifiedGoldDetector detector;
     //Motor declarations
