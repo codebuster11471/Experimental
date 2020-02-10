@@ -30,23 +30,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -62,9 +55,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Driver_Op_With_IMU", group="Iterative Opmode")
+@TeleOp(name="Test_Mode_With_Extra_Intake_Motor", group="Iterative Opmode")
 //@Disabled
-public class Driver_Op_With_IMU extends OpMode
+public class Test_Mode_With_Extra_Intake_Motor extends OpMode
 {
     //Drive system declarations
     private ElapsedTime runtime = new ElapsedTime();
@@ -89,7 +82,7 @@ public class Driver_Op_With_IMU extends OpMode
     //Intake/outtake system declarations
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
-    //private DcMotor rampMotor = null;
+    private DcMotor rampMotor = null;
     private double intakeOpStop = 0.00;  //0%
     private double intakeOpStart = 1.00;  //100%
     private double intakeOpLast = intakeOpStop;  //Initialize at stop
@@ -127,7 +120,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
-        //rampMotor = hardwareMap.get(DcMotor.class, "rampMotor");
+        rampMotor = hardwareMap.get(DcMotor.class, "rampMotor");
 
         //Set motor direction
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -136,7 +129,7 @@ public class Driver_Op_With_IMU extends OpMode
         motorRR.setDirection(DcMotor.Direction.REVERSE);
         intakeR.setDirection(DcMotor.Direction.FORWARD);
         intakeL.setDirection(DcMotor.Direction.REVERSE);
-        //rampMotor.setDirection(DcMotor.Direction.FORWARD); //TODO: Double check this
+        rampMotor.setDirection(DcMotor.Direction.FORWARD); //TODO: Double check this
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -326,7 +319,7 @@ public class Driver_Op_With_IMU extends OpMode
         //Send calculated power to intake/outtake Motors
         intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
         intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
-        //rampMotor.setPower(intakeOpFinal - outtakeOpFinal);
+        rampMotor.setPower(intakeOpFinal - outtakeOpFinal);
 //************************************************************************************************//
 
 
