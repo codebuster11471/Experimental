@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -83,8 +84,6 @@ public class Test_Mode_With_Extra_Intake_Motor extends OpMode
     //Intake/outtake system declarations
     private DcMotor intakeR = null;
     private DcMotor intakeL = null;
-    private DcMotor rampMotorR = null;
-    private DcMotor rampMotorL = null;
     private double intakeOpStop = 0.00;  //0%
     private double intakeOpStart = 1.00;  //100%
     private double intakeOpLast = intakeOpStop;  //Initialize at stop
@@ -107,8 +106,10 @@ public class Test_Mode_With_Extra_Intake_Motor extends OpMode
     Servo   servoL;  //Left fang servo
     Servo   servoR;  //Right fang servo
     boolean fangsClosed = false;  //Fang position tracker, FALSE = open, TRUE = closed
-    //Capstone Servo
+    //Servos
     Servo   capstone;
+//    CRServo continuousServoR;
+//    CRServo continuousServoL;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -122,8 +123,8 @@ public class Test_Mode_With_Extra_Intake_Motor extends OpMode
         motorRR = hardwareMap.get(DcMotor.class, "motorRR");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
-        rampMotorR = hardwareMap.get(DcMotor.class, "rampMotorR");
-        rampMotorL  = hardwareMap.get(DcMotor.class, "rampMotorL");
+//        continuousServoR = hardwareMap.get(CRServo.class, "frontServoR");
+//        continuousServoL = hardwareMap.get(CRServo.class, "frontServoL");
 
         //Set motor direction
         motorFL.setDirection(DcMotor.Direction.FORWARD);
@@ -132,8 +133,8 @@ public class Test_Mode_With_Extra_Intake_Motor extends OpMode
         motorRR.setDirection(DcMotor.Direction.REVERSE);
         intakeR.setDirection(DcMotor.Direction.FORWARD);
         intakeL.setDirection(DcMotor.Direction.REVERSE);
-        rampMotorR.setDirection(DcMotor.Direction.FORWARD); //TODO: Double check this
-        rampMotorL.setDirection(DcMotor.Direction.REVERSE);
+//        continuousServoR.setDirection(CRServo.Direction.FORWARD);
+//        continuousServoL.setDirection(CRServo.Direction.REVERSE);
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -323,8 +324,13 @@ public class Test_Mode_With_Extra_Intake_Motor extends OpMode
         //Send calculated power to intake/outtake Motors
         intakeR.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
         intakeL.setPower(intakeOpFinal - outtakeOpFinal);  //_Both_ intake or outtake should _not_ be true at the same time
-        rampMotorR.setPower(intakeOpFinal - outtakeOpFinal);
-        rampMotorL.setPower(intakeOpFinal - outtakeOpFinal);
+
+//        continuousServoR.setPower(intakeOpFinal - outtakeOpFinal);
+//        continuousServoL.setPower(intakeOpFinal - outtakeOpFinal);
+
+//        continuousServoL.setPower(1);
+//        continuousServoL.setPower(-1);
+
 //************************************************************************************************//
 
 
@@ -347,3 +353,5 @@ public class Test_Mode_With_Extra_Intake_Motor extends OpMode
         telemetry.addLine("kthxbye");
     }
 }
+
+//Pull was successful
