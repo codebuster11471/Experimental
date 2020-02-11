@@ -44,7 +44,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name="F_BlueSide_BridgePark", group="Codebusters")
+@Autonomous(name="F_Zero_BlueSide_BridgePark", group="Codebusters")
 //@Disabled
 public class F_BlueSide_BridgePark extends LinearOpMode {
     //Detector declaration
