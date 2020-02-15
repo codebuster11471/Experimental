@@ -201,13 +201,13 @@ public class Driver_Op_With_IMU extends OpMode
 
 //*******FANG OPERATION***************************************************************************//
         //Toggle FANGS Open When pressing Left Bumper
-        if (gamepad1.left_bumper){
+        if (gamepad1.x){
             servoL.setPosition(0);
             servoR.setPosition(0);
             fangsClosed = false;  //Keep track of fang position, as it can override drive speed
         }
         // Toggle Fangs Closed When Pressing Right Bumper
-        if (gamepad1.right_bumper){
+        if (gamepad1.y){
             servoL.setPosition(0.33);
             servoR.setPosition(0.33);
             fangsClosed = true;  //Keep track of fang position, as it can override drive speed
@@ -216,12 +216,12 @@ public class Driver_Op_With_IMU extends OpMode
 
 //*******CAPSTONE SERVO OPERATION*****************************************************************//
         //Dump CAPSTONE SERVO when pressing Right Trigger
-        if (gamepad2.dpad_down){
-            capstone.setPosition(0.5);
+        if (gamepad2.x){
+            capstone.setPosition(0);
         }
         // Reset CAPSTONE SERVO when Pressing left trigger
-        if (gamepad2.dpad_up){
-            capstone.setPosition(0);
+        if (gamepad2.y){
+            capstone.setPosition(1);
         }
 //************************************************************************************************//
 
