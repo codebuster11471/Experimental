@@ -153,7 +153,8 @@ public class E_RedSide_WallPark extends LinearOpMode {
                 pidDriveCommand(25, 60, 0, 0.7, 4);  //1st bridge
                 intakeOperation(-1);  //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(25, -20, 45, 0.75, 4);  //2nd setup
+                pidDriveCommand(25, -20, 0, 0.75, 4);  //2nd setup
+                pidDriveCommand(25, -20, 90, 0.75, 4);  //2nd setup
                 pidDriveCommand(40, -20, 90, 0.4, 3);  //2nd forward
                 intakeOperation(1); //Intake on
                 pidDriveCommand(40, -30,  90, 0.3, 3);  //2nd stone grab
@@ -175,10 +176,11 @@ public class E_RedSide_WallPark extends LinearOpMode {
                 pidDriveCommand(25, 60, 0, 0.75, 5);  //1st bridge
                 intakeOperation(-1);  //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(25, -9, 45, 0.75, 5);  //2nd setup
-                pidDriveCommand(42, -9, 90, 0.5, 5);  //2nd forward
+                pidDriveCommand(25, -9, 0, 0.75, 5);  //2nd setup
+                pidDriveCommand(25, -9, 90, 0.75, 5);  //2nd setup
+                pidDriveCommand(41, -9, 90, 0.5, 5);  //2nd forward
                 intakeOperation(1); //Intake on
-                pidDriveCommand(42, -17,  90, 0.3, 5);  //2nd stone grab
+                pidDriveCommand(41, -17,  90, 0.3, 5);  //2nd stone grab
                 pidDriveCommand(25, -17, 0, 0.4, 5);  //2nd backup
                 pidDriveCommand(25, 63, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
@@ -196,10 +198,11 @@ public class E_RedSide_WallPark extends LinearOpMode {
                 pidDriveCommand(25, 60, 0, 0.75, 5);  //1st under bridge
                 intakeOperation(-1);  //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
+                pidDriveCommand(25, -2, 0, 0.75, 5);  //2nd setup position
                 pidDriveCommand(25, -2, 90, 0.75, 5);  //2nd setup position
-                pidDriveCommand(41, -2, 90, 0.5, 5);  //2nd drive forward
+                pidDriveCommand(40, -2, 90, 0.5, 5);  //2nd drive forward
                 intakeOperation(1); //Intake on
-                pidDriveCommand(41, -11,  90, 0.3, 5);  //2nd stone grab
+                pidDriveCommand(40, -11,  90, 0.3, 5);  //2nd stone grab
                 pidDriveCommand(25, -11, 0, 0.4, 5);  //2nd backup
                 pidDriveCommand(25, 63, 0, 0.75, 5); //2nd under bridge
                 intakeOperation(-1); //Intake out

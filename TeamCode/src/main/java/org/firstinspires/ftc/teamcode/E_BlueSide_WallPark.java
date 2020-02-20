@@ -153,12 +153,13 @@ public class E_BlueSide_WallPark extends LinearOpMode {
                 pidDriveCommand(24, -53, 0, 0.75, 5);  //1st bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1, -1, 0, 0.5);  //1st drop off
+                pidDriveCommand(24, 0, 0, 0.75, 5);  //2nd setup
                 pidDriveCommand(24, 0, -90, 0.75, 5);  //2nd setup
                 pidDriveCommand(42, 0, -90, 0.5, 5);  //2nd forward
                 intakeOperation(1); //Intake on
                 pidDriveCommand(42, 9, -90, 0.3, 5);  //2nd stone grab
-                pidDriveCommand(28, -10, 0, 0.4, 5);  //2nd backup
-                pidDriveCommand(28, -56, 0, 0.75, 5); //2nd bridge
+                pidDriveCommand(26, -10, 0, 0.4, 5);  //2nd backup
+                pidDriveCommand(26, -56, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1, -1, 0, 0.5);  //2nd drop off
                 pidDriveCommand(5, -56, 0, 0.85, 2);  //Alliance park setup
@@ -166,20 +167,21 @@ public class E_BlueSide_WallPark extends LinearOpMode {
                 intakeOperation(0); //Intake off
             }
             if(skystoneLocation == 2) {
-                pidDriveCommand(27, -15, -90, 0.7, 3); //1st setup
-                pidDriveCommand(42, -15, -90, 0.4, 2); //1st forward
+                pidDriveCommand(27, -16, -90, 0.7, 3); //1st setup
+                pidDriveCommand(42, -16, -90, 0.4, 2); //1st forward
                 intakeOperation(1); //Intake on
                 pidDriveCommand(42, -7,  -90, 0.3, 5);  //1st stone grab
-                pidDriveCommand(27, -14, 0, 0.4, 4);  //1st backup
+                pidDriveCommand(27, -16, 0, 0.4, 4);  //1st backup
                 pidDriveCommand(24, -60, 0, 0.75, 5);  //1st bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(24, 9, -90, 0.75, 5);  //2nd setup
-                pidDriveCommand(42, 9, -90, 0.5, 3);  //2nd forward
+                pidDriveCommand(24, 8, 0, 0.75, 5);  //2nd setup
+                pidDriveCommand(24, 8, -90, 0.75, 5);  //2nd setup
+                pidDriveCommand(42, 8, -90, 0.5, 3);  //2nd forward
                 intakeOperation(1); //Intake on
                 pidDriveCommand(42, 16,  -90, 0.3, 5);  //2nd stone grab
-                pidDriveCommand(27, 11, 0, 0.4, 5);  //2nd backup
-                pidDriveCommand(27, -66, 0, 0.75, 5); //2nd bridge
+                pidDriveCommand(26, 11, 0, 0.4, 5);  //2nd backup
+                pidDriveCommand(26, -66, 0, 0.75, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off
                 pidDriveCommand(5, -56, 0, 0.85, 2);  //Alliance park setup
@@ -187,20 +189,21 @@ public class E_BlueSide_WallPark extends LinearOpMode {
                 intakeOperation(0); //Intake off
             }
             if(skystoneLocation == 3) {//Stone nearest the wall
-                pidDriveCommand(27, -6, -90, 0.7, 2); //1st setup
-                pidDriveCommand(42, -6, -90, 0.4, 3); //1st forward
+                pidDriveCommand(27, -8, -90, 0.7, 2); //1st setup
+                pidDriveCommand(42, -8, -90, 0.4, 3); //1st forward
                 intakeOperation(1); //Intake on
                 pidDriveCommand(42, -1,  -90, 0.3, 5);  //1st stone grab
-                pidDriveCommand(27, -6, 0, 0.4, 5);  //1st backup
+                pidDriveCommand(27, -8, 0, 0.4, 5);  //1st backup
                 pidDriveCommand(24, -60, 0, 0.7, 5);  //1st bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off
-                pidDriveCommand(24, 17, -90, 0.75, 5);  //2nd position, step 1
-                pidDriveCommand(42, 17, -90, 0.4, 5);  //2nd position, step 2
+                pidDriveCommand(24, 16, 0, 0.75, 5);  //2nd position, step 1
+                pidDriveCommand(24, 16, -90, 0.75, 5);  //2nd position, step 1
+                pidDriveCommand(42, 16, -90, 0.4, 5);  //2nd position, step 2
                 intakeOperation(1); //Intake on
-                pidDriveCommand(42, 23,  -90, 0.3, 5);  //2nd stone grab
-                pidDriveCommand(27, 19, 0, 0.4, 5);  //2nd backup
-                pidDriveCommand(27, -66, 0, 0.7, 5); //2nd bridge
+                pidDriveCommand(42, 24,  -90, 0.3, 5);  //2nd stone grab
+                pidDriveCommand(26, 24, 0, 0.4, 5);  //2nd backup
+                pidDriveCommand(26, -66, 0, 0.7, 5); //2nd bridge
                 intakeOperation(-1); //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //2nd drop off
                 pidDriveCommand(5, -56, 0, 0.85, 2);  //Alliance park setup

@@ -179,10 +179,10 @@ public class F_BlueSide_BridgePark extends LinearOpMode {
                 intakeOperation(0);  //Turn off intake
             }
             else if(skystoneLocation == 3) {//Stone nearest the wall
-                pidDriveCommand(26, 7, 0, 0.75, 2); //1st setup
+                pidDriveCommand(26, 5, 0, 0.75, 2); //1st setup
                 intakeOperation(1); //Intake on
-                pidDriveCommand(46, 7, 0, 0.2, 3.5);  //1st stone grab
-                pidDriveCommand(26, 7, 0, 0.3, 1.5);  //1st backup
+                pidDriveCommand(46, 5, 0, 0.2, 3.5);  //1st stone grab
+                pidDriveCommand(26, 5, 0, 0.3, 1.5);  //1st backup
                 pidDriveCommand(26, -60, 0, 0.85, 4);  //1st bridge
                 intakeOperation(-1);  //Intake out
                 pidDriveCommand(-1, -1,  -1, 0, 0.5);  //1st drop off

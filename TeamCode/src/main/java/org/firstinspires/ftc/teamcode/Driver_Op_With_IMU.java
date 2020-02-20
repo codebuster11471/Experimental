@@ -96,7 +96,7 @@ public class Driver_Op_With_IMU extends OpMode
     private double intakeOpTemp = intakeOpStop;  //Initialize at stop
     private double intakeOpFinal = intakeOpStop;  //Initialize at stop
     private double outtakeOpStop = 0.00;  //0%
-    private double outtakeOpStart = 0.60;  //65%
+    private double outtakeOpStart = 0.90;  //90%
     private double outtakeOpLast = outtakeOpStop;  //Initialize at stop
     private double outtakeOpTemp = outtakeOpStop;  //Initialize at stop
     private double outtakeOpFinal = outtakeOpStop;  //Initialize at stop
@@ -242,7 +242,7 @@ public class Driver_Op_With_IMU extends OpMode
             driver1SpeedKLast = driver1SpeedKTemp;
         }
         if (fangsClosed == true ) {
-            driver1SpeedKFinal = 0.50 ;  //Override to Very Slow if fangs are closed
+            driver1SpeedKFinal = 1.0 ;  //Override to Very Slow if fangs are closed
         }
         else {
             driver1SpeedKFinal = driver1SpeedKTemp;  //Driver 1 speed gain
