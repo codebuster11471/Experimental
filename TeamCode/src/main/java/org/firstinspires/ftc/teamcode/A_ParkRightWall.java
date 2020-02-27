@@ -145,8 +145,9 @@ public class A_ParkRightWall extends LinearOpMode {
         //Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             foundationFangs(0);  //Open fangs
-            pidDriveCommand(2, 0, 0, 0.30, 5);  //Drive forward
-            pidDriveCommand(2, 18, 0, 0.30, 5);  //Strafe to the side
+            pidDriveCommand(-1,-1,-1,0,22);  //Wait
+            pidDriveCommand(1, 0, 0, 0.30, 5);  //Drive forward
+            pidDriveCommand(1, 18, 0, 0.30, 5);  //Strafe to the side
             break;
         }
         //Shutdown on STOP
@@ -228,9 +229,9 @@ public class A_ParkRightWall extends LinearOpMode {
 
     public void pidDriveCommand(double xTarget, double yTarget, double thetaTarget, double maxPower, double timeout){
         //PID controller declarations
-        double Kp = (1-maxPower)/6;  //[--];  Kp is dependent on the maxPower input
+        double Kp = .10; //(1-maxPower)/6;  //[--];  Kp is dependent on the maxPower input
         double Ki = 0.000005;  //[--]
-        double Kd = 0.0008;  //[--]
+        double Kd = 0.0016;  //[--]
         double xError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double yError = 1;  //[in];  Initialize to 1 so it is larger than strafeDriveTol
         double thetaError = 1;
@@ -243,8 +244,8 @@ public class A_ParkRightWall extends LinearOpMode {
         double prevYError = 0;
         double prevXError = 0;
         double prevThetaError = 0;
-        double xyTol = 0.25;  //[inch]; Allowable strafe/drive error before exiting PID loop
-        double thetaTol = 0.1;  //[deg]; Allowable turn error before exiting PID loop
+        double xyTol = (maxPower + 0.35)/1.8;  //[inch]; Allowable strafe/drive error before exiting PID loop
+        double thetaTol = 0.5;  //[deg]; Allowable turn error before exiting PID loop
         double driveCmdtemp = 0;  //Storage variable
         double strafeCmdtemp = 0;  //Storage variable
         boolean moveComplete = false;  //[bool];  Tracker to determine when movement is complete or not
